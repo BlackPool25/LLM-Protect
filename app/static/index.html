@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM-Protect - Input Preparation & Inference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .file-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .supported-formats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        
+        .format-badge {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .log-panel {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .log-panel h2 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            line-height: 1.5;
+        }
+        
+        .log-info {
+            background: #264f78;
+            color: #dcdcaa;
+        }
+        
+        .log-success {
+            background: #0e6027;
+            color: #4ec9b0;
+        }
+        
+        .log-error {
+            background: #5a1d1d;
+            color: #f48771;
+        }
+        
+        .log-warning {
+            background: #544214;
+            color: #dcdcaa;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        
+        .result-panel h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+        
+        .result-content {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ LLM-Protect Input Preparation & Inference</h1>
+            <p class="subtitle">Secure input processing with Gemma 2B integration</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>📝 User Input</h2>
+                <form id="inputForm">
+                    <div class="form-group">
+                        <label for="userPrompt">Your Prompt:</label>
+                        <textarea 
+                            id="userPrompt" 
+                            name="userPrompt" 
+                            placeholder="Enter your question or prompt here..."
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fileUpload">Upload File (Optional):</label>
+                        <input 
+                            type="file" 
+                            id="fileUpload" 
+                            name="file"
+                            accept=".txt,.md,.pdf,.docx"
+                        >
+                        <div class="file-info">
+                            <strong>Supported formats:</strong>
+                            <div class="supported-formats">
+                                <span class="format-badge">TXT</span>
+                                <span class="format-badge">MD</span>
+                                <span class="format-badge">PDF</span>
+                                <span class="format-badge">DOCX</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="externalData">External Data / RAG (Optional):</label>
+                        <textarea 
+                            id="externalData" 
+                            name="externalData" 
+                            placeholder='Enter external data as JSON array, e.g., ["context 1", "context 2"]'
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="retrieveFromDB" name="retrieveFromDB">
+                            <label for="retrieveFromDB" style="margin: 0;">Retrieve from Vector DB</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="submitBtn">
+                        🚀 Process & Generate Response
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2>ℹ️ Model Information</h2>
+                <div class="form-group">
+                    <label>Model:</label>
+                    <p style="color: #667eea; font-weight: bold;">Gemma 2B (Google)</p>
+                </div>
+                <div class="form-group">
+                    <label>Processing Pipeline:</label>
+                    <ol style="font-size: 14px; line-height: 1.8; color: #666;">
+                        <li>Parse & Validate Input</li>
+                        <li>Extract Text from Files</li>
+                        <li>Process RAG/External Data</li>
+                        <li>Normalize Text</li>
+                        <li>Calculate Tokens & Stats</li>
+                        <li>Package with HMAC Signatures</li>
+                        <li>Generate LLM Response</li>
+                    </ol>
+                </div>
+                <div class="form-group">
+                    <label>Security Features:</label>
+                    <ul style="font-size: 14px; line-height: 1.8; color: #666;">
+                        <li>✓ HMAC-SHA256 Verification</li>
+                        <li>✓ Input Validation</li>
+                        <li>✓ File Type Restrictions</li>
+                        <li>✓ Size Limits (10MB)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log-panel">
+            <h2>📊 Processing Log</h2>
+            <div id="logContent"></div>
+        </div>
+        
+        <div class="result-panel" id="resultPanel" style="display: none;">
+            <h3>✨ Generated Response</h3>
+            <div class="result-content" id="resultContent"></div>
+            
+            <div class="stats-grid" id="statsGrid"></div>
+        </div>
+    </div>
+    
+    <script>
+        const logContent = document.getElementById('logContent');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultContent = document.getElementById('resultContent');
+        const statsGrid = document.getElementById('statsGrid');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+        
+        function clearLogs() {
+            logContent.innerHTML = '';
+        }
+        
+        function showLoading() {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Processing...';
+        }
+        
+        function hideLoading() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🚀 Process & Generate Response';
+        }
+        
+        document.getElementById('inputForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            clearLogs();
+            resultPanel.style.display = 'none';
+            showLoading();
+            
+            addLog('Starting input preparation pipeline...', 'info');
+            
+            const formData = new FormData(e.target);
+            const userPrompt = formData.get('userPrompt');
+            const externalData = formData.get('externalData');
+            const retrieveFromDB = document.getElementById('retrieveFromDB').checked;
+            
+            addLog(`User prompt length: ${userPrompt.length} characters`, 'info');
+            
+            if (externalData) {
+                formData.set('external_data', externalData);
+            }
+            formData.set('retrieve_from_vector_db', retrieveFromDB);
+            
+            try {
+                // Step 1: Prepare input
+                addLog('Step 1: Preparing input with HMAC signatures...', 'info');
+                const prepareResponse = await fetch('/api/v1/prepare-text', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!prepareResponse.ok) {
+                    throw new Error(`Preparation failed: ${prepareResponse.statusText}`);
+                }
+                
+                const preparedData = await prepareResponse.json();
+                addLog('✓ Input preparation complete', 'success');
+                addLog(`  - Request ID: ${preparedData.metadata.request_id}`, 'info');
+                addLog(`  - Tokens: ${preparedData.text_embed_stub.stats.token_estimate}`, 'info');
+                addLog(`  - External chunks: ${preparedData.text_embed_stub.normalized_external.length}`, 'info');
+                addLog(`  - Prep time: ${preparedData.metadata.prep_time_ms.toFixed(2)}ms`, 'info');
+                
+                // Step 2: Generate LLM response
+                addLog('Step 2: Generating LLM response...', 'info');
+                const generateResponse = await fetch('/api/v1/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prepared_input: preparedData,
+                        max_new_tokens: 512
+                    })
+                });
+                
+                if (!generateResponse.ok) {
+                    throw new Error(`Generation failed: ${generateResponse.statusText}`);
+                }
+                
+                const generatedData = await generateResponse.json();
+                
+                if (generatedData.success) {
+                    addLog('✓ LLM response generated successfully', 'success');
+                    addLog(`  - Input tokens: ${generatedData.input_tokens}`, 'info');
+                    addLog(`  - Output tokens: ${generatedData.output_tokens}`, 'info');
+                    addLog(`  - Generation time: ${generatedData.total_time_ms.toFixed(2)}ms`, 'info');
+                    
+                    // Display result
+                    resultPanel.style.display = 'block';
+                    resultContent.textContent = generatedData.generated_text;
+                    
+                    // Display stats
+                    statsGrid.innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${preparedData.text_embed_stub.stats.token_estimate}</div>
+                            <div class="stat-label">Input Tokens</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${generatedData.output_tokens}</div>
+                            <div class="stat-label">Output Tokens</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${(preparedData.metadata.prep_time_ms + generatedData.total_time_ms).toFixed(0)}ms</div>
+                            <div class="stat-label">Total Time</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${preparedData.text_embed_stub.normalized_external.length}</div>
+                            <div class="stat-label">RAG Chunks</div>
+                        </div>
+                    `;
+                    
+                    addLog('✓ Process complete!', 'success');
+                } else {
+                    addLog(`✗ Generation failed: ${generatedData.error}`, 'error');
+                }
+                
+            } catch (error) {
+                addLog(`✗ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+            } finally {
+                hideLoading();
+            }
+        });
+        
+        // Initial log
+        addLog('System ready. Enter your prompt and click "Process & Generate Response"', 'info');
+    </script>
+</body>
+</html>
+

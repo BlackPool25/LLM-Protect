@@ -7,9 +7,11 @@ Provides endpoints for text and media preparation with HMAC verification.
 import time
 import os
 from typing import Optional, List
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, status, Request
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from app.config import settings
 from app.models.schemas import PreparedInput, HealthResponse, InputRequest, MediaRequest
@@ -33,6 +35,7 @@ from app.services.payload_packager import (
     summarize_payload,
     create_error_response
 )
+from app.services.llm_service import generate_response, check_model_availability
 
 # Setup logging
 setup_logging()
@@ -59,6 +62,37 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files (for web interface)
+try:
+    from pathlib import Path
+    static_path = Path(__file__).parent / "static"
+    static_path.mkdir(exist_ok=True)
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+except Exception as e:
+    logger.warning(f"Could not mount static files: {e}")
+
+
+# Pydantic models for LLM endpoints
+class GenerateRequest(BaseModel):
+    """Request model for LLM generation."""
+    prepared_input: PreparedInput
+    max_new_tokens: int = 512
+    temperature: float = 0.7
+    top_p: float = 0.9
+    do_sample: bool = True
+
+
+class GenerateResponse(BaseModel):
+    """Response model for LLM generation."""
+    success: bool
+    generated_text: str
+    input_tokens: int
+    output_tokens: int
+    total_time_ms: float
+    model: str = "gemma-2b"
+    error: Optional[str] = None
+    preparation_metadata: Optional[dict] = None
 
 
 @app.on_event("startup")
@@ -436,14 +470,124 @@ async def prepare_media_input(
         return create_error_response(str(e), prep_time_ms=total_time)
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """Root endpoint - redirect to docs."""
+    """Serve the web interface."""
+    try:
+        from pathlib import Path
+        html_path = Path(__file__).parent / "static" / "index.html"
+        if html_path.exists():
+            return html_path.read_text()
+        else:
+            return """
+            <html>
+                <body>
+                    <h1>LLM-Protect Input Preparation API</h1>
+                    <p>Version: {}</p>
+                    <ul>
+                        <li><a href="/docs">API Documentation</a></li>
+                        <li><a href="/health">Health Check</a></li>
+                    </ul>
+                </body>
+            </html>
+            """.format(settings.API_VERSION)
+    except Exception as e:
+        logger.error(f"Error serving root: {e}")
+        return HTMLResponse(f"<h1>Error: {e}</h1>", status_code=500)
+
+
+@app.post(
+    f"{settings.API_PREFIX}/generate",
+    response_model=GenerateResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Generate LLM response from prepared input",
+    description=(
+        "Takes prepared input from /prepare-text endpoint and generates "
+        "a response using Gemma 2B. This endpoint receives the HMAC-verified "
+        "and processed input data and runs it through the LLM."
+    )
+)
+async def generate_llm_response(request: GenerateRequest):
+    """
+    Generate LLM response from prepared input.
+    
+    This endpoint receives the output from /prepare-text and uses it to
+    generate a response with the Gemma 2B model.
+    """
+    start_time = time.time()
+    
+    try:
+        # Extract the prepared data
+        prepared = request.prepared_input
+        
+        # Construct the prompt from prepared data
+        # Combine user input with external data context
+        prompt_parts = [prepared.text_embed_stub.normalized_user]
+        
+        if prepared.text_embed_stub.normalized_external:
+            prompt_parts.append("\n\nContext:")
+            for chunk in prepared.text_embed_stub.normalized_external:
+                # Remove delimiters for the prompt
+                clean_chunk = chunk.replace("[EXTERNAL]", "").replace("[/EXTERNAL]", "")
+                prompt_parts.append(f"- {clean_chunk}")
+        
+        full_prompt = "\n".join(prompt_parts)
+        
+        logger.info(
+            f"Generating response for request {prepared.metadata.request_id}: "
+            f"{len(full_prompt)} chars, {prepared.text_embed_stub.stats.token_estimate} tokens"
+        )
+        
+        # Generate response
+        result = generate_response(
+            prompt=full_prompt,
+            max_new_tokens=request.max_new_tokens,
+            temperature=request.temperature,
+            top_p=request.top_p,
+            do_sample=request.do_sample
+        )
+        
+        # Add preparation metadata
+        result["preparation_metadata"] = {
+            "request_id": prepared.metadata.request_id,
+            "prep_time_ms": prepared.metadata.prep_time_ms,
+            "input_tokens_estimated": prepared.text_embed_stub.stats.token_estimate,
+            "rag_chunks": len(prepared.text_embed_stub.normalized_external),
+            "hmac_signatures": len(prepared.text_embed_stub.hmacs),
+        }
+        
+        total_time = (time.time() - start_time) * 1000
+        logger.info(
+            f"Generation complete for {prepared.metadata.request_id}: "
+            f"{result.get('output_tokens', 0)} tokens in {total_time:.2f}ms"
+        )
+        
+        return GenerateResponse(**result)
+        
+    except Exception as e:
+        logger.error(f"Error generating response: {e}", exc_info=True)
+        return GenerateResponse(
+            success=False,
+            generated_text="",
+            input_tokens=0,
+            output_tokens=0,
+            total_time_ms=(time.time() - start_time) * 1000,
+            error=str(e)
+        )
+
+
+@app.get(f"{settings.API_PREFIX}/model-status")
+async def model_status():
+    """
+    Check the status of the LLM model.
+    
+    Returns information about whether the model is loaded and available.
+    """
+    status_info = check_model_availability()
     return {
-        "message": "LLM-Protect Input Preparation API",
-        "version": settings.API_VERSION,
-        "docs": "/docs",
-        "health": "/health"
+        "model": "gemma-2b",
+        **status_info,
+        "endpoint": f"{settings.API_PREFIX}/generate"
     }
 
 

@@ -1,0 +1,234 @@
+# LLM-Protect .gitignore
+
+# ============================================================================
+# Python
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ============================================================================
+# Virtual Environments
+# ============================================================================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ============================================================================
+# Environment Variables & Secrets
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+
+# Keep the example file
+!.env.example
+
+# ============================================================================
+# IDEs & Editors
+# ============================================================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# Operating System
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
+
+# ============================================================================
+# Application Specific
+# ============================================================================
+# Upload directory (contains user-uploaded files)
+uploads/*
+!uploads/.gitkeep
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Model cache & downloads (Hugging Face models can be large)
+models/
+.cache/
+huggingface/
+transformers_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# ============================================================================
+# Testing
+# ============================================================================
+# Test output files
+test_document.txt
+test_invalid.exe
+*.pdf
+*.docx
+test_results/
+
+# Keep example test files
+!test_samples/*.txt
+!test_samples/*.md
+!test_samples/*.pdf
+!test_samples/*.docx
+
+# ============================================================================
+# Documentation (keep these for development)
+# ============================================================================
+# Keep all markdown files
+# !*.md
+
+# ============================================================================
+# Miscellaneous
+# ============================================================================
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Media files (unless specifically needed)
+*.mp4
+*.avi
+*.mov
+*.mp3
+*.wav
+
+# Large files
+*.bin
+*.dat
+
+# ============================================================================
+# Project Specific Notes
+# ============================================================================
+# Keep these files for development on different PC:
+# - All source code (app/)
+# - requirements.txt
+# - All .md documentation files
+# - test_api.py and test scripts
+# - test_samples/ directory
+# - .env.example (template for .env)
+# - README.md, USAGE.md, etc.
+# - Static files (app/static/)
+
+# Files excluded (need to recreate):
+# - .env (contains secrets, create from .env.example)
+# - uploads/ (runtime directory)
+# - venv/ (recreate with: python -m venv venv)
+# - Model cache (downloads automatically on first use)
+# - Logs (generated at runtime)
+
