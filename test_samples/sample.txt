@@ -1,0 +1,10 @@
+This is a sample text document for testing the LLM-Protect input preparation system.
+
+The system should extract this text, chunk it appropriately, and sign each chunk with an HMAC.
+
+This document tests basic TXT file processing capabilities.
+
+The chunking algorithm should split this into manageable pieces while preserving context.
+
+Each chunk will be signed independently to ensure data integrity throughout the pipeline.
+
