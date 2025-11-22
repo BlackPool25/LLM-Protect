@@ -1,0 +1,45 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:49:20.647328Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Explain the concept of images and how they work?",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 48,
+        "token_estimate": 11,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "c5c8e835-383a-4f0e-85cd-5b2c068014e0",
+      "timestamp": "2025-11-22T05:49:20.647094Z",
+      "session_id": "e3387305-14b3-45ab-aa2e-a6f2296734a9",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.6048679351806641,
+      "step_times": {
+        "parse_validate": 0.04029273986816406,
+        "file_extraction": 0.020503997802734375,
+        "rag_processing": 0.013828277587890625,
+        "normalization": 0.030040740966796875,
+        "media_processing": 0.015497207641601562,
+        "token_calculation": 0.07581710815429688
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:35.584016Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Summarise this file",
+      "normalized_external": [
+        "[EXTERNAL]This is a sample text document for testing the LLM-Protect input preparation system.\n\nThe system should extract this text, chunk it appropriately, and sign each chunk with an HMAC.\n\nThis document tests basic TXT file processing capabilities.\n\nThe chunking algorithm should split this into manageable pieces while preserving context.\n\nEach chunk will be signed independently to ensure data integrity throughout the pipeline.\n\n [Source: uploads/sample.txt, Chunk: 0][/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "576dcca8e6aa12c5c92d8f88872cf2f4b7411079f9bdfcb8e387dcb3f8d08599"
+      ],
+      "stats": {
+        "char_total": 504,
+        "token_estimate": 95,
+        "user_external_ratio": 0.038,
+        "file_chunks_count": 1,
+        "extracted_total_chars": 425
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "e6e9ade0-dc9c-4531-bd85-139867a9f70b",
+      "timestamp": "2025-11-22T05:44:35.583752Z",
+      "session_id": "f0cda428-3a8d-415b-9ce4-8255c73e7881",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": true,
+      "file_info": {
+        "original_path": "uploads/sample.txt",
+        "hash": "9b916a95ed0d5fd4f9d5ca100ce72871a32af8663cc960f1cc7f223f2a2f7a8e",
+        "type": "txt",
+        "chunk_count": 1,
+        "extraction_success": true,
+        "extraction_error": null
+      },
+      "prep_time_ms": 1.3837814331054688,
+      "step_times": {
+        "parse_validate": 0.17309188842773438,
+        "file_extraction": 0.19550323486328125,
+        "rag_processing": 0.0457763671875,
+        "normalization": 0.07319450378417969,
+        "media_processing": 0.008821487426757812,
+        "token_calculation": 0.5319118499755859
+      }
+    }
+  }
+}

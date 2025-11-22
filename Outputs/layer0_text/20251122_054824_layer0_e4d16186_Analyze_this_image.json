@@ -1,0 +1,54 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:48:24.574635Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Analyze this image",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 18,
+        "token_estimate": 4,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {
+        "hash": "7a0e342f9e49390664a88b00bbb8370bf3084a231ab210c8ad972c2a5db20251",
+        "format": "png",
+        "size_bytes": 287,
+        "dimensions": [
+          100,
+          100
+        ],
+        "description": null
+      },
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "e4d16186-0a05-4357-8cb3-e15699935978",
+      "timestamp": "2025-11-22T05:48:24.574365Z",
+      "session_id": "9d2723ea-1eb0-4eb7-97d9-ddbdf339c8ce",
+      "rag_enabled": false,
+      "has_media": true,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 7.312774658203125,
+      "step_times": {
+        "parse_validate": 0.22673606872558594,
+        "file_extraction": 0.025272369384765625,
+        "rag_processing": 0.020265579223632812,
+        "normalization": 0.09083747863769531,
+        "media_processing": 5.433797836303711,
+        "token_calculation": 0.5779266357421875
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T06:03:15.311568Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is this image 🥥🍊😭",
+      "normalized_external": [
+        "[EXTERNAL]User's name is Shreyas[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [
+        ":loudly_crying_face:",
+        ":coconut:",
+        ":tangerine:"
+      ],
+      "hmacs": [
+        "7302724660ae8462adea0ed9d7914b3b6a51caed88ca337f430566f30fafdf3a"
+      ],
+      "stats": {
+        "char_total": 65,
+        "token_estimate": 25,
+        "user_external_ratio": 0.338,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {
+        "hash": "9aa5922def9a607e8d844aa8788e081b06260e5f6c4ecadddda58cdf01151cea",
+        "format": "png",
+        "size_bytes": 154866,
+        "dimensions": [
+          1280,
+          448
+        ],
+        "description": null
+      },
+      "emoji_summary": {
+        "count": 3,
+        "types": [
+          "😭",
+          "🥥",
+          "🍊"
+        ],
+        "descriptions": [
+          ":loudly_crying_face:",
+          ":coconut:",
+          ":tangerine:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "09e3a1a5-c98a-484f-9259-af5fe604b682",
+      "timestamp": "2025-11-22T06:03:15.311322Z",
+      "session_id": "f5845f9a-6e0f-44b9-b5df-964a94353358",
+      "rag_enabled": true,
+      "has_media": true,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 9.070396423339844,
+      "step_times": {
+        "parse_validate": 0.3609657287597656,
+        "file_extraction": 0.03147125244140625,
+        "rag_processing": 0.1361370086669922,
+        "normalization": 2.76947021484375,
+        "media_processing": 4.418134689331055,
+        "token_calculation": 0.09250640869140625
+      }
+    }
+  }
+}

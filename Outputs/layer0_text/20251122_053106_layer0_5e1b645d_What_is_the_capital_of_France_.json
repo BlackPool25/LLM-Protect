@@ -1,0 +1,57 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:31:06.109334Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is the capital of France?",
+      "normalized_external": [
+        "[EXTERNAL]Paris is the capital and largest city of France. It's known for the Eiffel Tower, Louvre Museum, and Notre-Dame Cathedral.[/EXTERNAL]",
+        "[EXTERNAL]The Earth orbits the Sun at an average distance of 150 million kilometers. This distance is called one Astronomical Unit (AU).[/EXTERNAL]",
+        "[EXTERNAL]Water boils at 100°C (212°F) at sea level. The boiling point decreases with altitude due to lower atmospheric pressure.[/EXTERNAL]",
+        "[EXTERNAL]Python is a high-level programming language known for its simplicity and readability. It's widely used for web development, data science, machine learning, and automation.[/EXTERNAL]",
+        "[EXTERNAL]A stack is a linear data structure that follows LIFO (Last In First Out) principle. Common operations include push (add element), pop (remove element), and peek (view top element).[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "7d520139746fb0fe622c8978547653f1e0c8d627459679fbefd28e8e7509803d",
+        "5317fa6989dbd95d4acc547a8c4d833f3e3a9682ede316f007daf88c1339ae3f",
+        "13009149ebb62a338182f5981f4665cdfb6debe5116c49844aa365a7e98f9475",
+        "5d484e124ed871b1facb0ec16e913ce02320060d99d2f46c051c2cb2025dfbdd",
+        "64c8a1ce34c06d8b7bb1e1955ae935c5cdfb8b3e6d514ad1c8622135c2ea3003"
+      ],
+      "stats": {
+        "char_total": 857,
+        "token_estimate": 190,
+        "user_external_ratio": 0.035,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "5e1b645d-484b-4164-a858-837638142795",
+      "timestamp": "2025-11-22T05:31:06.109126Z",
+      "session_id": "71bd5bc6-752b-4865-9731-5bfa47b5bc7a",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 157.43255615234375,
+      "step_times": {
+        "parse_validate": 0.0438690185546875,
+        "file_extraction": 0.0209808349609375,
+        "rag_processing": 156.68416023254395,
+        "normalization": 0.030994415283203125,
+        "media_processing": 0.0171661376953125,
+        "token_calculation": 0.19049644470214844
+      }
+    }
+  }
+}

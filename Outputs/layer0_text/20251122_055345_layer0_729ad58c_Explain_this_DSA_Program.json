@@ -1,0 +1,76 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:53:45.695358Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Explain this DSA Program",
+      "normalized_external": [
+        "[EXTERNAL]#include <stdio.h> \n#include<stdlib.h> \n#define size 10 \nint top = -1; \nint stack[size]; \nvoid push(int item) \n{ \n    if(top == size-1) \n        printf(\"\\nStack is Full or Stack Overflow. Push operation \nis not allowed\\n\"); \n    else \n    { \n        top++; \n        stack[top] = item; \n        printf(\"\\nElement is pushed\\n\"); \n    } \n} \nvoid pop() \n{ \n    int item; \n    if (top == -1) \n        printf(\"\\nStack is Empty. Pop operation is not \nallowed\\n\"); \n    else \n    { [Source: uploads/Dsa.pdf, Chunk: 0][/EXTERNAL]",
+        "[EXTERNAL]operation is not \nallowed\\n\"); \n    else \n    { \n        item = stack[top]; \n        top--; \n        printf(\"\\n%d is popped from stack\\n\",item); \n    } \n} \nvoid display() \n{ \n    printf(\"\\nCurrent status of stack is:\\n\"); \n    for(int i=0; i<=top; i++) \n    { \n        printf(\"%d\\t\",stack[i]); \n    } \n} \nvoid isEmpty() \n{ \n    if (top == -1) \n        printf(\"\\nStack is Empty\\n\"); \n} \nvoid isFull() \n{ \n    if (top == size-1) \n        printf(\"\\nStack is Full or Stack Overflow\\n\"); [Source: uploads/Dsa.pdf, Chunk: 1][/EXTERNAL]",
+        "[EXTERNAL]printf(\"\\nStack is Full or Stack Overflow\\n\"); \n\n} \nint peek() \n{ \n    int item; \n    item = stack[top]; \n    return item; \n} \nvoid main() \n{ \n    int choice,item,item1; \n    while(1) \n    { \n        printf(\"\\nEnter the operation to be performed\\n\"); \n        printf(\"1. PUSH\\n2. POP\\n3. Status of Stack\\n4. \nIsEmpty\\n5. IsFull\\n6. Peek\\n7. Exit\\n\"); \n        scanf(\"%d\",&choice); \n        switch(choice) \n        { \n            case 1: printf(\"Enter an element to push\\n\"); [Source: uploads/Dsa.pdf, Chunk: 2][/EXTERNAL]",
+        "[EXTERNAL]case 1: printf(\"Enter an element to push\\n\"); \n                scanf(\"%d\",&item); \n                push(item); \n                break; \n            case 2: pop(); \n                break; \n            case 3: display(); \n                break; \n            case 4: isEmpty(); \n                break; \n            case 5: isFull(); \n                break; \n            case 6: item1 = peek(); \n                printf(\"\\nTop most element of stack is \n%d\\n\",item1); \n                break; [Source: uploads/Dsa.pdf, Chunk: 3][/EXTERNAL]",
+        "[EXTERNAL]stack is \n%d\\n\",item1); \n                break; \n            case 7: exit(0); \n                break; \n            default: printf(\"\\nWrong choice\\n\"); \n        } \n    } \n     \n} \n\nFollowing questions to be answered in lab record: \n1. Since arrays have a fixed size, how would you handle situations \nwhere the number of elements in a stack exceeds the initial \ncapacity of the array? \n2. What are the trade-offs between stack using dynamic array and \nstatic array? \n3. [Source: uploads/Dsa.pdf, Chunk: 4][/EXTERNAL]",
+        "[EXTERNAL]stack using dynamic array and \nstatic array? \n3. Describe how a stack overflow condition is handled in an array-\nbased implementation of a stack. How would you modify the \nimplementation to avoid overflow errors or handle them more \nefficiently? \n4. Write a pop() function which prints the index of top element \nand returns the element to main() function. \nNOTE: Answer limit is maximum 50 words per question. [Source: uploads/Dsa.pdf, Chunk: 5][/EXTERNAL]",
+        "[EXTERNAL]Data Structures and Algorithms (DSA) is the study of organizing and manipulating data efficiently. It includes arrays, linked lists, stacks, queues, trees, graphs, sorting, and searching algorithms.[/EXTERNAL]",
+        "[EXTERNAL]To learn DSA effectively: Start with basic data structures, practice coding problems daily, understand time complexity, solve LeetCode problems, and focus on understanding rather than memorization.[/EXTERNAL]",
+        "[EXTERNAL]HMAC (Hash-based Message Authentication Code) ensures data integrity and authenticity using cryptographic hash functions and secret keys.[/EXTERNAL]",
+        "[EXTERNAL]Prompt injection is a security vulnerability where attackers manipulate LLM inputs to bypass safety measures or extract sensitive information.[/EXTERNAL]",
+        "[EXTERNAL]A stack is a linear data structure that follows LIFO (Last In First Out) principle. Common operations include push (add element), pop (remove element), and peek (view top element).[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "73dca1fef29927a4955252d78b6142888581450cbe3d0860616ffb87daf78267",
+        "6276532032e7bb4f47e9e8c06429f1aa9934f31c1799c804d9a76d089aaa6269",
+        "8f5296ff3bbed3bfdeb80d57755245065ea8cd4e1e4432726a5cd9e433d446e9",
+        "6ac021dbb85b4608f99079cecb7a63eb42bacf0b4c7328dd69e51f399681e2f3",
+        "dbdef70109287fda3c2b0261ed43c9cd88107ef94bcb90cdfd9f7e64af6e7fe7",
+        "32410c5ad822005599f33a1c5d82a03edc2fe7c16c06e75754a5a021b9a3ea4d",
+        "b57847c8f31bdb80c58c618c9f48dccddcb06f75b8c23ba25b6908c153593733",
+        "fc8a34cd5066e446f4b9f5d76e52956f3ace3b766a3835cee8c3a5047f38e5cb",
+        "4b055464522f25b4510c59d0adf1cb50a01705b421b7775020207c265e45364b",
+        "d2c7ea9d139260f6917bd55735591382a211c247d33eae50b4f90dd896b44f87",
+        "64c8a1ce34c06d8b7bb1e1955ae935c5cdfb8b3e6d514ad1c8622135c2ea3003"
+      ],
+      "stats": {
+        "char_total": 4126,
+        "token_estimate": 1042,
+        "user_external_ratio": 0.006,
+        "file_chunks_count": 6,
+        "extracted_total_chars": 2791
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "729ad58c-1a96-4c77-b764-f397517db144",
+      "timestamp": "2025-11-22T05:53:45.695146Z",
+      "session_id": "c173020a-387f-441b-b77e-995dc918f345",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": true,
+      "file_info": {
+        "original_path": "uploads/Dsa.pdf",
+        "hash": "7dd92717b8f0157695fa0ff45b89d525c59eb5a3f67d0b785baef4f3ed0108a0",
+        "type": "pdf",
+        "chunk_count": 6,
+        "extraction_success": true,
+        "extraction_error": null
+      },
+      "prep_time_ms": 154.36458587646484,
+      "step_times": {
+        "parse_validate": 0.2913475036621094,
+        "file_extraction": 2.763032913208008,
+        "rag_processing": 150.10976791381836,
+        "normalization": 0.033855438232421875,
+        "media_processing": 0.019788742065429688,
+        "token_calculation": 0.6561279296875
+      }
+    }
+  }
+}

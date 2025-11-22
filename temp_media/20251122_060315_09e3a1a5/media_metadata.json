@@ -1,0 +1,29 @@
+{
+  "request_id": "09e3a1a5-c98a-484f-9259-af5fe604b682",
+  "timestamp": "20251122_060315",
+  "image_metadata": {
+    "hash": "9aa5922def9a607e8d844aa8788e081b06260e5f6c4ecadddda58cdf01151cea",
+    "format": "png",
+    "size_bytes": 154866,
+    "dimensions": [
+      1280,
+      448
+    ],
+    "description": null
+  },
+  "emoji_data": [
+    {
+      "char": "😭",
+      "desc": ":loudly_crying_face:"
+    },
+    {
+      "char": "🥥",
+      "desc": ":coconut:"
+    },
+    {
+      "char": "🍊",
+      "desc": ":tangerine:"
+    }
+  ],
+  "note": "This media is stored temporarily for further layer processing"
+}

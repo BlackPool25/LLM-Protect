@@ -36,6 +36,7 @@ def package_payload(
     
     # Metadata
     request_id: Optional[str] = None,
+    session_id: Optional[str] = None,
     rag_enabled: bool = False,
     has_media: bool = False,
     has_file: bool = False,
@@ -113,6 +114,7 @@ def package_payload(
     metadata = MetadataInfo(
         request_id=request_id,
         timestamp=timestamp,
+        session_id=session_id,
         rag_enabled=rag_enabled,
         has_media=has_media,
         has_file=has_file,

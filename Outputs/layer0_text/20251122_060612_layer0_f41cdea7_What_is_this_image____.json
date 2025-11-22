@@ -1,0 +1,72 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T06:06:12.221409Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is this image 🥥🍊😭",
+      "normalized_external": [
+        "[CONVERSATION]Previous conversation context:\nUser: What is this image 🥥🍊😭\nAssistant: - They're a 17-year-old boy\n- They're a vegetarian\n- They're from India\n- They're a male\n- They're from the south of India\n- They're Hindu\n- They're a student\n- They're a gamer\n- They're a writer\n- They're into cooking\n- They're into fashion\n- They're into music\n- They're into movies\n- They're into anime\n- They're into sports\n- They're into photography\n- They're a fan of Harry Potter\n- They're a fan of Twilight\n- They're a fan of Harry Potter\n- They're a fan of the Avengers\n- They're a fan of Pokemon\n- They're a fan of Minecraft\n- They're a fan of Animal Crossing\n- They're a fan of Overwatch\n- They're a fan of Sonic\n- They're a fan of Smash Bros\n- They're a fan of Super Smash Bros\n- They're a fan of Zelda\n- They're a fan of Mario\n- They're a fan of Mario Kart\n- They're a fan of Mario Party\n- They're a fan of Mario Tennis\n- They're a fan of Mario Strikers\n- They're a fan of Kirby\n- They're a fan of Sonic the Hedgehog\n- They're a fan of Crash Bandicoot\n- They're a fan of Splatoon\n- They're a fan of Mario Odyssey\n- They're a fan of Super Mario Odyssey\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Kirby and the Forgotten Land\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Splatoon 3\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Kirby and the Forgotten Land\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Kirby and the Forgotten Land\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Splatoon 3\n- They're a fan of Kirby and the Forgotten Land\n- They're a fan of Animal Crossing: New Horizons\n- They're a fan of Kirby[/CONVERSATION]",
+        "[EXTERNAL]User's name is Shreyas[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [
+        ":loudly_crying_face:",
+        ":coconut:",
+        ":tangerine:"
+      ],
+      "hmacs": [
+        "92ec0304a1af8db5e99df843f6e13542dc6962f7fd1e769eba6ed8ddc726e199",
+        "7302724660ae8462adea0ed9d7914b3b6a51caed88ca337f430566f30fafdf3a"
+      ],
+      "stats": {
+        "char_total": 1801,
+        "token_estimate": 519,
+        "user_external_ratio": 0.012,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {
+        "hash": "9aa5922def9a607e8d844aa8788e081b06260e5f6c4ecadddda58cdf01151cea",
+        "format": "png",
+        "size_bytes": 154866,
+        "dimensions": [
+          1280,
+          448
+        ],
+        "description": null
+      },
+      "emoji_summary": {
+        "count": 3,
+        "types": [
+          "😭",
+          "🥥",
+          "🍊"
+        ],
+        "descriptions": [
+          ":loudly_crying_face:",
+          ":coconut:",
+          ":tangerine:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "f41cdea7-903e-4f93-8086-9288f0aeb2c4",
+      "timestamp": "2025-11-22T06:06:12.221160Z",
+      "session_id": "f5845f9a-6e0f-44b9-b5df-964a94353358",
+      "rag_enabled": true,
+      "has_media": true,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 1.9884109497070312,
+      "step_times": {
+        "parse_validate": 0.3135204315185547,
+        "file_extraction": 0.01811981201171875,
+        "rag_processing": 0.05984306335449219,
+        "normalization": 0.07939338684082031,
+        "media_processing": 0.39267539978027344,
+        "token_calculation": 0.2932548522949219
+      }
+    }
+  }
+}

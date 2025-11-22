@@ -1,16 +1,21 @@
 """
 Media processing service.
 
-Handles image processing (metadata extraction, hash calculation)
-and emoji processing (extraction, description, summary).
+Handles image processing (metadata extraction, hash calculation),
+emoji processing (extraction, description, summary),
+and temporary media storage for further layer processing.
 """
 
 import os
+import shutil
+import json
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, List, Tuple, Any
 from app.utils.hmac_utils import hash_bytes_sha256, hash_file_sha256
 from app.utils.logger import get_logger
 from app.models.schemas import ImageInfo, EmojiSummary
+from app.config import settings
 
 logger = get_logger(__name__)
 
@@ -345,4 +350,125 @@ def generate_image_description_placeholder(image_path: str) -> str:
     """
     logger.info(f"Image description requested for {image_path} (not yet implemented)")
     return "Image description not yet implemented"
+
+
+def save_media_for_further_processing(
+    image_path: Optional[str],
+    image_metadata: Optional[Dict],
+    emoji_data: Optional[List[Dict]],
+    request_id: str
+) -> Optional[Dict[str, str]]:
+    """
+    Save media (images and emojis) temporarily for further layer processing.
+    
+    Per the architecture plan, images and emojis should be stored temporarily
+    so that further layers (Layer 1: Semantic Guards, Layer 2: LLM Inference)
+    can process them with more sophisticated models.
+    
+    Args:
+        image_path: Path to the original image (if provided)
+        image_metadata: Extracted image metadata dict
+        emoji_data: List of emoji information dicts
+        request_id: Unique request ID for tracking
+    
+    Returns:
+        Dictionary with paths to saved files, or None if no media to save
+    
+    Example:
+        >>> paths = save_media_for_further_processing(
+        ...     "uploads/test.png",
+        ...     {"format": "PNG", "dimensions": [100, 100]},
+        ...     [{"char": "😀", "description": "grinning face"}],
+        ...     "req-123"
+        ... )
+        >>> 'image_copy' in paths
+        True
+        >>> 'metadata_file' in paths
+        True
+    """
+    if not image_path and not emoji_data:
+        return None
+    
+    try:
+        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        media_dir = settings.MEDIA_TEMP_DIR / f"{timestamp}_{request_id[:8]}"
+        media_dir.mkdir(parents=True, exist_ok=True)
+        
+        saved_paths = {}
+        
+        # Copy image to temp directory for further processing
+        if image_path and os.path.exists(image_path):
+            image_filename = Path(image_path).name
+            temp_image_path = media_dir / image_filename
+            shutil.copy2(image_path, temp_image_path)
+            saved_paths["image_copy"] = str(temp_image_path)
+            logger.info(f"Saved image copy for further processing: {temp_image_path}")
+        
+        # Save metadata JSON for reference
+        if image_metadata or emoji_data:
+            metadata = {
+                "request_id": request_id,
+                "timestamp": timestamp,
+                "image_metadata": image_metadata or {},
+                "emoji_data": emoji_data or [],
+                "note": "This media is stored temporarily for further layer processing"
+            }
+            
+            metadata_file = media_dir / "media_metadata.json"
+            with open(metadata_file, 'w', encoding='utf-8') as f:
+                json.dump(metadata, f, indent=2, ensure_ascii=False)
+            
+            saved_paths["metadata_file"] = str(metadata_file)
+            saved_paths["temp_dir"] = str(media_dir)
+            logger.info(f"Saved media metadata for further processing: {metadata_file}")
+        
+        logger.info(
+            f"Media saved for further processing: "
+            f"{'image' if image_path else 'no image'}, "
+            f"{len(emoji_data) if emoji_data else 0} emojis"
+        )
+        
+        return saved_paths
+        
+    except Exception as e:
+        logger.error(f"Failed to save media for further processing: {e}", exc_info=True)
+        return None
+
+
+def cleanup_old_temp_media(max_age_hours: int = 24):
+    """
+    Cleanup old temporary media files.
+    
+    This should be called periodically (e.g., by a cron job or background task)
+    to prevent temp_media directory from growing indefinitely.
+    
+    Args:
+        max_age_hours: Delete files older than this many hours
+    
+    Example:
+        >>> cleanup_old_temp_media(max_age_hours=24)
+    """
+    try:
+        import time
+        current_time = time.time()
+        max_age_seconds = max_age_hours * 3600
+        
+        temp_dir = settings.MEDIA_TEMP_DIR
+        if not temp_dir.exists():
+            return
+        
+        deleted_count = 0
+        for subdir in temp_dir.iterdir():
+            if subdir.is_dir():
+                dir_age = current_time - subdir.stat().st_mtime
+                if dir_age > max_age_seconds:
+                    shutil.rmtree(subdir)
+                    deleted_count += 1
+                    logger.info(f"Deleted old temp media directory: {subdir.name}")
+        
+        if deleted_count > 0:
+            logger.info(f"Cleaned up {deleted_count} old temp media directories")
+            
+    except Exception as e:
+        logger.error(f"Failed to cleanup old temp media: {e}", exc_info=True)
 

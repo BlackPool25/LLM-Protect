@@ -1,0 +1,57 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:36.166624Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is DSA?",
+      "normalized_external": [
+        "[EXTERNAL]Data Structures and Algorithms (DSA) is the study of organizing and manipulating data efficiently. It includes arrays, linked lists, stacks, queues, trees, graphs, sorting, and searching algorithms.[/EXTERNAL]",
+        "[EXTERNAL]To learn DSA effectively: Start with basic data structures, practice coding problems daily, understand time complexity, solve LeetCode problems, and focus on understanding rather than memorization.[/EXTERNAL]",
+        "[EXTERNAL]HMAC (Hash-based Message Authentication Code) ensures data integrity and authenticity using cryptographic hash functions and secret keys.[/EXTERNAL]",
+        "[EXTERNAL]Prompt injection is a security vulnerability where attackers manipulate LLM inputs to bypass safety measures or extract sensitive information.[/EXTERNAL]",
+        "[EXTERNAL]RAG (Retrieval-Augmented Generation) enhances LLM responses by retrieving relevant documents from a knowledge base before generating answers.[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "b57847c8f31bdb80c58c618c9f48dccddcb06f75b8c23ba25b6908c153593733",
+        "fc8a34cd5066e446f4b9f5d76e52956f3ace3b766a3835cee8c3a5047f38e5cb",
+        "4b055464522f25b4510c59d0adf1cb50a01705b421b7775020207c265e45364b",
+        "d2c7ea9d139260f6917bd55735591382a211c247d33eae50b4f90dd896b44f87",
+        "5a57e26a778ce72c6c4ecaabbabd0b8a3605c8b83326291ff35f9573bf1cc537"
+      ],
+      "stats": {
+        "char_total": 936,
+        "token_estimate": 177,
+        "user_external_ratio": 0.013,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "9732a825-fe3a-4490-bb82-731cc5490850",
+      "timestamp": "2025-11-22T05:44:36.166380Z",
+      "session_id": "6240509f-7150-4b44-8fd2-44172f85c4c2",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 571.0868835449219,
+      "step_times": {
+        "parse_validate": 0.024318695068359375,
+        "file_extraction": 0.0247955322265625,
+        "rag_processing": 570.380449295044,
+        "normalization": 0.025272369384765625,
+        "media_processing": 0.018835067749023438,
+        "token_calculation": 0.194549560546875
+      }
+    }
+  }
+}

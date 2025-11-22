@@ -304,7 +304,7 @@
                             type="file" 
                             id="file" 
                             name="file"
-                            accept=".txt,.md,.pdf,.docx"
+                            accept=".txt,.md,.pdf,.docx,.png,.jpg,.jpeg,.gif,.webp"
                         >
                         <div class="file-info">
                             <strong>Supported formats:</strong>
@@ -313,7 +313,14 @@
                                 <span class="format-badge">MD</span>
                                 <span class="format-badge">PDF</span>
                                 <span class="format-badge">DOCX</span>
+                                <span class="format-badge">PNG</span>
+                                <span class="format-badge">JPG</span>
+                                <span class="format-badge">GIF</span>
                             </div>
+                            <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                                📄 Documents (TXT/MD/PDF/DOCX) → Text extraction<br>
+                                🖼️ Images (PNG/JPG/GIF) → Media processing with metadata
+                            </p>
                         </div>
                     </div>
                     
@@ -327,9 +334,35 @@
                     </div>
                     
                     <div class="form-group">
+                        <label>🧠 Context Options:</label>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="use_conversation_history" name="use_conversation_history" checked>
+                            <label for="use_conversation_history" style="margin: 0;">
+                                💬 Use Conversation History (Multi-turn chat)
+                            </label>
+                        </div>
+                        <p style="font-size: 0.85em; color: #666; margin: 5px 0 10px 25px;">
+                            Remembers your previous messages in this session
+                        </p>
+                        
                         <div class="checkbox-group">
                             <input type="checkbox" id="retrieve_from_vector_db" name="retrieve_from_vector_db">
-                            <label for="retrieve_from_vector_db" style="margin: 0;">Retrieve from Vector DB</label>
+                            <label for="retrieve_from_vector_db" style="margin: 0;">
+                                📚 Retrieve from Vector DB (Knowledge Base)
+                            </label>
+                        </div>
+                        <p style="font-size: 0.85em; color: #666; margin: 5px 0 10px 25px;">
+                            Searches knowledge base for relevant information (DSA, Python, etc.)
+                        </p>
+                    </div>
+                    
+                    <div class="form-group" id="sessionInfo" style="display:none; background: #e8f5e9; padding: 10px; border-radius: 5px;">
+                        <strong>📌 Active Session:</strong>
+                        <div style="font-family: monospace; font-size: 0.85em; margin-top: 5px;" id="sessionId">None</div>
+                        <div style="margin-top: 5px;">
+                            <span id="messageCount" style="color: #2e7d32;">0 messages</span> | 
+                            <button type="button" class="btn" style="padding: 5px 10px; font-size: 0.85em;" id="newSessionBtn">🔄 New Session</button>
                         </div>
                     </div>
                     
@@ -389,6 +422,10 @@
         const statsGrid = document.getElementById('statsGrid');
         const submitBtn = document.getElementById('submitBtn');
         
+        // Session management
+        let currentSessionId = null;
+        let messageCount = 0;
+        
         function addLog(message, type = 'info') {
             const entry = document.createElement('div');
             entry.className = `log-entry log-${type}`;
@@ -412,6 +449,47 @@
             submitBtn.textContent = '🚀 Process & Generate Response';
         }
         
+        async function createNewSession() {
+            try {
+                const response = await fetch('/api/v1/sessions/create', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                currentSessionId = data.session_id;
+                messageCount = 0;
+                updateSessionDisplay();
+                addLog(`✓ New session created: ${currentSessionId.substring(0, 16)}...`, 'success');
+                return currentSessionId;
+            } catch (error) {
+                addLog(`✗ Failed to create session: ${error.message}`, 'error');
+                return null;
+            }
+        }
+        
+        function updateSessionDisplay() {
+            const sessionInfo = document.getElementById('sessionInfo');
+            const sessionIdDisplay = document.getElementById('sessionId');
+            const messageCountDisplay = document.getElementById('messageCount');
+            
+            if (currentSessionId) {
+                sessionInfo.style.display = 'block';
+                sessionIdDisplay.textContent = currentSessionId.substring(0, 32) + '...';
+                messageCountDisplay.textContent = `${messageCount} messages`;
+            } else {
+                sessionInfo.style.display = 'none';
+            }
+        }
+        
+        // Initialize session on page load
+        (async () => {
+            await createNewSession();
+        })();
+        
+        // New session button handler
+        document.getElementById('newSessionBtn').addEventListener('click', async () => {
+            await createNewSession();
+        });
+        
         document.getElementById('inputForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -425,14 +503,30 @@
             const userPrompt = formData.get('user_prompt');
             const externalData = formData.get('external_data');
             const retrieveFromDB = document.getElementById('retrieve_from_vector_db').checked;
+            const useConversationHistory = document.getElementById('use_conversation_history').checked;
             
             addLog(`User prompt length: ${userPrompt.length} characters`, 'info');
             
-            // Remove checkbox value (it's not the actual boolean)
-            formData.delete('retrieve_from_vector_db');
+            // Add session ID if available
+            if (currentSessionId) {
+                formData.set('session_id', currentSessionId);
+                addLog(`Using session: ${currentSessionId.substring(0, 16)}...`, 'info');
+            }
             
-            // Set the boolean as string for FastAPI Form
+            // Remove checkbox values (they're not the actual booleans)
+            formData.delete('retrieve_from_vector_db');
+            formData.delete('use_conversation_history');
+            
+            // Set the booleans as strings for FastAPI Form
             formData.set('retrieve_from_vector_db', retrieveFromDB ? 'true' : 'false');
+            formData.set('use_conversation_history', useConversationHistory ? 'true' : 'false');
+            
+            if (retrieveFromDB) {
+                addLog('📚 Vector DB retrieval enabled - will search knowledge base', 'info');
+            }
+            if (useConversationHistory && messageCount > 0) {
+                addLog(`💬 Using conversation history (${messageCount} previous messages)`, 'info');
+            }
             
             try {
                 // Step 1: Prepare input
@@ -477,6 +571,10 @@
                     addLog(`  - Input tokens: ${generatedData.input_tokens}`, 'info');
                     addLog(`  - Output tokens: ${generatedData.output_tokens}`, 'info');
                     addLog(`  - Generation time: ${generatedData.total_time_ms.toFixed(2)}ms`, 'info');
+                    
+                    // Update message count (user message + assistant response = 2)
+                    messageCount += 2;
+                    updateSessionDisplay();
                     
                     // Display result
                     resultPanel.style.display = 'block';

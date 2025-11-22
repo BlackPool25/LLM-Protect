@@ -1,0 +1,45 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:35.594138Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is DSA?",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 12,
+        "token_estimate": 5,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "a4dc04b0-4d05-45bc-ae55-6d02ebf2d9e3",
+      "timestamp": "2025-11-22T05:44:35.593935Z",
+      "session_id": "eecbe917-0378-4900-9587-680b42c3d633",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.5118846893310547,
+      "step_times": {
+        "parse_validate": 0.06175041198730469,
+        "file_extraction": 0.018358230590820312,
+        "rag_processing": 0.011920928955078125,
+        "normalization": 0.017642974853515625,
+        "media_processing": 0.010967254638671875,
+        "token_calculation": 0.03600120544433594
+      }
+    }
+  }
+}

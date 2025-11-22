@@ -1,0 +1,45 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:35.586738Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Hello without file",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 18,
+        "token_estimate": 3,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "a26262fb-4a41-4cb2-ac30-1fbba4ceebde",
+      "timestamp": "2025-11-22T05:44:35.586433Z",
+      "session_id": "4d668042-80dc-4750-82b1-dbc002cff2db",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.5524158477783203,
+      "step_times": {
+        "parse_validate": 0.040531158447265625,
+        "file_extraction": 0.025033950805664062,
+        "rag_processing": 0.014543533325195312,
+        "normalization": 0.020742416381835938,
+        "media_processing": 0.0095367431640625,
+        "token_calculation": 0.0362396240234375
+      }
+    }
+  }
+}

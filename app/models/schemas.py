@@ -92,6 +92,7 @@ class MetadataInfo(BaseModel):
     """Metadata about the request and processing."""
     request_id: str = Field(..., description="Unique request identifier (UUID)")
     timestamp: str = Field(..., description="ISO 8601 timestamp")
+    session_id: Optional[str] = Field(None, description="Conversation session identifier (UUID)")
     rag_enabled: bool = Field(..., description="Whether RAG/external data was used")
     has_media: bool = Field(..., description="Whether media (images) were included")
     has_file: bool = Field(..., description="Whether files were uploaded")

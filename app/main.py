@@ -26,7 +26,8 @@ from app.services.rag_handler import process_rag_data
 from app.services.text_normalizer import normalize_text
 from app.services.media_processor import (
     process_media,
-    check_image_library_availability
+    check_image_library_availability,
+    save_media_for_further_processing
 )
 from app.services.token_processor import calculate_tokens_and_stats
 from app.services.payload_packager import (
@@ -37,6 +38,7 @@ from app.services.payload_packager import (
 )
 from app.services.llm_service import generate_response, check_model_availability
 from app.services.output_saver import get_output_saver
+from app.services.session_manager import get_session_manager, format_conversation_for_rag
 
 # Setup logging
 setup_logging()
@@ -162,7 +164,9 @@ async def prepare_text_input(
     external_data: Optional[str] = Form(None, description="JSON array of external data strings"),
     file: Optional[UploadFile] = File(None, description="Optional file upload (TXT/MD/PDF/DOCX)"),
     file_path: Optional[str] = Form(None, description="Optional path to file on server"),
-    retrieve_from_vector_db: bool = Form(False, description="Retrieve from vector database")
+    retrieve_from_vector_db: bool = Form(False, description="Retrieve from vector database"),
+    session_id: Optional[str] = Form(None, description="Session ID for conversation memory"),
+    use_conversation_history: bool = Form(True, description="Include conversation history as context")
 ):
     """
     Prepare text input with comprehensive processing.
@@ -188,6 +192,32 @@ async def prepare_text_input(
             # Treat as single string
             external_data_list = [external_data]
     
+    # Handle session management
+    session_manager = get_session_manager()
+    
+    # Create or get session
+    if session_id is None:
+        session_id = session_manager.create_session()
+        logger.info(f"Created new session: {session_id[:8]}...")
+    elif not session_manager.get_session(session_id):
+        logger.warning(f"Session {session_id[:8]} not found, creating new one")
+        session_id = session_manager.create_session()
+    else:
+        logger.info(f"Using existing session: {session_id[:8]}...")
+    
+    # Get conversation history if enabled (KEEP SEPARATE from RAG per INNOVATION 4)
+    conversation_text = None
+    if use_conversation_history:
+        messages = session_manager.get_context(session_id, limit=5)
+        if messages:
+            history_text = format_conversation_for_rag(messages, max_messages=5)
+            if history_text:
+                conversation_text = history_text
+                logger.info(f"[{session_id[:8]}] Retrieved {len(messages)} messages from conversation history (will be tagged [CONVERSATION])")
+    
+    # NOTE: Conversation context is NOT merged with external_data_list
+    # It will be processed separately to avoid confusing conversation with RAG data
+    
     try:
         # Step 1: Parse and validate
         step_start = time.time()
@@ -199,21 +229,49 @@ async def prepare_text_input(
         
         # Handle file upload
         temp_file_path = None
-        if file:
+        temp_image_path = None
+        if file and file.filename:
             # Save uploaded file
             filename = file.filename
+            if not filename.strip():
+                raise HTTPException(status_code=400, detail="Empty filename provided")
+            
+            # Validate file extension
+            if not settings.is_allowed_extension(filename):
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"File type not allowed. Allowed types: {', '.join(sorted(settings.ALLOWED_EXTENSIONS))}"
+                )
+            
             temp_file_path = str(settings.get_file_path(filename))
             
             with open(temp_file_path, "wb") as f:
                 content = await file.read()
                 f.write(content)
             
+            # Validate file size
+            if not settings.validate_file_size(len(content)):
+                os.remove(temp_file_path)  # Cleanup
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"File too large. Max size: {settings.MAX_FILE_SIZE_MB}MB"
+                )
+            
             logger.info(f"File uploaded: {filename} ({len(content)} bytes)")
-            file_path = temp_file_path
+            
+            # Determine if it's an image or text file
+            if settings.is_image_file(filename):
+                temp_image_path = temp_file_path
+                logger.info(f"Image file detected: {filename} - will process as media")
+            else:
+                file_path = temp_file_path
+                logger.info(f"Text file detected: {filename} - will extract text")
         
+        # Pass image_path if it's an image file
         parsed = parse_and_validate(
             user_prompt=user_prompt,
             file_path=file_path,
+            image_path=temp_image_path,  # New: pass image if uploaded
             external_data=external_data_list
         )
         
@@ -228,6 +286,7 @@ async def prepare_text_input(
             for i, ext in enumerate(parsed['raw_external'][:3]):  # Show first 3
                 logger.info(f"[{request_id}]   External[{i}]: {ext[:80]}..." if len(ext) > 80 else f"[{request_id}]   External[{i}]: {ext}")
         logger.info(f"[{request_id}] File provided: {parsed['raw_file'] or 'None'}")
+        logger.info(f"[{request_id}] Image provided: {parsed.get('raw_image') or 'None'}")
         logger.info(f"[{request_id}] Validation: {parsed['validation']}")
         
         with RequestLogger(request_id, logger) as req_logger:
@@ -263,19 +322,20 @@ async def prepare_text_input(
             
             step_times["file_extraction"] = (time.time() - step_start) * 1000
             
-            # Step 3: Process RAG data
+            # Step 3: Process RAG data and conversation context (SEPARATE per INNOVATION 4)
             step_start = time.time()
             external_chunks, hmacs, rag_enabled = process_rag_data(
                 user_prompt=parsed["raw_user"],
                 external_data=parsed["raw_external"],
                 file_chunks=file_chunks,
-                retrieve_from_db=retrieve_from_vector_db
+                retrieve_from_db=retrieve_from_vector_db,
+                conversation_text=conversation_text  # Separate from RAG!
             )
             step_times["rag_processing"] = (time.time() - step_start) * 1000
             req_logger.log_step("rag_processing", step_times["rag_processing"])
             
             # DETAILED LOG: Show RAG processing
-            logger.info(f"[{request_id}] ===== STEP 3: RAG DATA PROCESSING =====")
+            logger.info(f"[{request_id}] ===== STEP 3: CONTEXT PROCESSING (Conversation + RAG) =====")
             logger.info(f"[{request_id}] RAG enabled: {rag_enabled}")
             logger.info(f"[{request_id}] External chunks processed: {len(external_chunks)}")
             logger.info(f"[{request_id}] HMAC signatures generated: {len(hmacs)}")
@@ -310,13 +370,33 @@ async def prepare_text_input(
                 logger.info(f"[{request_id}] Emoji descriptions: {user_emoji_descs}")
             logger.info(f"[{request_id}] Emojis preserved in text: YES")
             
-            # Step 5: Process media (emojis only for text endpoint)
+            # Step 5: Process media (images and/or emojis)
             step_start = time.time()
+            
+            # Process image if uploaded (new feature!)
+            image_to_process = parsed.get("raw_image") if parsed.get("validation", {}).get("image_valid") else None
+            
             image_dict, emoji_summary = process_media(
+                image_path=image_to_process,
                 emojis=user_emojis,
                 emoji_descriptions=user_emoji_descs
             )
+            
+            if image_to_process:
+                logger.info(f"[{request_id}] Image processed from upload: {image_to_process}")
+            
             step_times["media_processing"] = (time.time() - step_start) * 1000
+            
+            # Save media for further layer processing if present
+            if (image_dict and "error" not in image_dict) or user_emojis:
+                media_paths = save_media_for_further_processing(
+                    image_path=image_to_process,
+                    image_metadata=image_dict if image_dict and "error" not in image_dict else None,
+                    emoji_data=[{"char": e, "desc": d} for e, d in zip(user_emojis, user_emoji_descs)] if user_emojis else None,
+                    request_id=request_id
+                )
+                if media_paths:
+                    logger.info(f"[{request_id}] ✓ Media saved for further processing at: {media_paths['temp_dir']}")
             
             # Step 6: Calculate tokens and stats
             step_start = time.time()
@@ -351,11 +431,12 @@ async def prepare_text_input(
                 emoji_descriptions=user_emoji_descs,
                 hmacs=hmacs,
                 stats=stats,
-                image_dict={},  # No image for text endpoint
+                image_dict=image_dict if image_dict else {},
                 emoji_summary=emoji_summary,
                 request_id=request_id,
+                session_id=session_id,
                 rag_enabled=rag_enabled,
-                has_media=False,
+                has_media=bool(image_dict and "error" not in image_dict),
                 has_file=bool(file_chunks),
                 file_info=file_info,
                 prep_time_ms=total_time,
@@ -392,6 +473,10 @@ async def prepare_text_input(
             saved_path = output_saver.save_layer0_output(prepared)
             if saved_path:
                 logger.info(f"[{request_id}] ✓ Output saved to: {saved_path}")
+            
+            # Save user message to session
+            session_manager.add_message(session_id, "user", user_prompt)
+            logger.info(f"[{session_id[:8]}] Saved user message to session")
             
             # Log summary
             logger.info(f"[{request_id}] ===== PREPARATION COMPLETE =====")
@@ -536,10 +621,22 @@ async def prepare_media_input(
             if saved_path:
                 logger.info(f"[{request_id}] ✓ Output saved to: {saved_path}")
             
+            # Save media for further layer processing (per architecture plan)
+            if image_dict or user_emojis:
+                media_paths = save_media_for_further_processing(
+                    image_path=temp_image_path if image_dict and "error" not in image_dict else None,
+                    image_metadata=image_dict if image_dict else None,
+                    emoji_data=[{"char": e, "desc": d} for e, d in zip(user_emojis, user_emoji_descs)] if user_emojis else None,
+                    request_id=request_id
+                )
+                if media_paths:
+                    logger.info(f"[{request_id}] ✓ Media saved for further processing at: {media_paths['temp_dir']}")
+            
             # Log summary
             logger.info(summarize_payload(prepared))
             
-            # Cleanup temp file
+            # Cleanup temp file ONLY if we didn't save it for further processing
+            # (if we saved it, it's been copied to temp_media)
             if temp_image_path and os.path.exists(temp_image_path):
                 try:
                     os.remove(temp_image_path)
@@ -672,6 +769,16 @@ async def generate_llm_response(request: GenerateRequest):
         if result.get('success'):
             generated = result.get('generated_text', '')
             logger.info(f"[{prepared.metadata.request_id}] Generated text preview: {generated[:150]}..." if len(generated) > 150 else f"[{prepared.metadata.request_id}] Generated text: {generated}")
+            
+            # Save assistant response to session if session_id exists
+            if prepared.metadata.session_id:
+                session_manager = get_session_manager()
+                session_manager.add_message(
+                    prepared.metadata.session_id,
+                    "assistant",
+                    generated
+                )
+                logger.info(f"[{prepared.metadata.session_id[:8]}] Saved assistant response to session")
         else:
             logger.error(f"[{prepared.metadata.request_id}] Generation error: {result.get('error', 'Unknown')}")
         
@@ -724,6 +831,104 @@ async def output_statistics():
     stats["recent_media_files"] = [f.name for f in recent_media]
     
     return stats
+
+
+@app.post(f"{settings.API_PREFIX}/sessions/create")
+async def create_session():
+    """
+    Create a new conversation session.
+    
+    Returns:
+        Session ID for use in subsequent requests
+    """
+    session_manager = get_session_manager()
+    session_id = session_manager.create_session()
+    
+    return {
+        "session_id": session_id,
+        "message": "Session created successfully",
+        "usage": "Include this session_id in your /prepare-text requests to enable conversation memory"
+    }
+
+
+@app.get(f"{settings.API_PREFIX}/sessions/{{session_id}}")
+async def get_session(session_id: str):
+    """
+    Get information about a conversation session.
+    
+    Args:
+        session_id: Session identifier
+    
+    Returns:
+        Session details including message history
+    """
+    session_manager = get_session_manager()
+    session = session_manager.get_session(session_id)
+    
+    if not session:
+        raise HTTPException(status_code=404, detail=f"Session {session_id} not found")
+    
+    return session.to_dict()
+
+
+@app.delete(f"{settings.API_PREFIX}/sessions/{{session_id}}")
+async def delete_session(session_id: str):
+    """
+    Delete a conversation session.
+    
+    Args:
+        session_id: Session identifier
+    
+    Returns:
+        Confirmation message
+    """
+    session_manager = get_session_manager()
+    success = session_manager.delete_session(session_id)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Session {session_id} not found")
+    
+    return {
+        "message": f"Session {session_id} deleted successfully"
+    }
+
+
+@app.post(f"{settings.API_PREFIX}/sessions/{{session_id}}/clear")
+async def clear_session(session_id: str):
+    """
+    Clear all messages in a conversation session.
+    
+    Args:
+        session_id: Session identifier
+    
+    Returns:
+        Confirmation message
+    """
+    session_manager = get_session_manager()
+    success = session_manager.clear_session(session_id)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Session {session_id} not found")
+    
+    return {
+        "message": f"Session {session_id} cleared successfully",
+        "session_id": session_id
+    }
+
+
+@app.get(f"{settings.API_PREFIX}/sessions")
+async def list_sessions():
+    """
+    List all active conversation sessions.
+    
+    Returns:
+        List of session details
+    """
+    session_manager = get_session_manager()
+    return {
+        "sessions": session_manager.list_sessions(),
+        "stats": session_manager.get_stats()
+    }
 
 
 if __name__ == "__main__":

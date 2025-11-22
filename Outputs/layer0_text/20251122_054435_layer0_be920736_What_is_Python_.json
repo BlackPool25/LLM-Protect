@@ -1,0 +1,45 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:35.589830Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is Python?",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 15,
+        "token_estimate": 4,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "be920736-a9e4-4a18-9c67-66ca9eac4609",
+      "timestamp": "2025-11-22T05:44:35.589621Z",
+      "session_id": "728925a4-abad-4e13-b692-23404ad1668b",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.38814544677734375,
+      "step_times": {
+        "parse_validate": 0.03457069396972656,
+        "file_extraction": 0.01811981201171875,
+        "rag_processing": 0.010967254638671875,
+        "normalization": 0.017404556274414062,
+        "media_processing": 0.0073909759521484375,
+        "token_calculation": 0.031232833862304688
+      }
+    }
+  }
+}

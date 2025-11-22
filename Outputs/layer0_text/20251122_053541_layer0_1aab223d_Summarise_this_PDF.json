@@ -1,0 +1,68 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:35:41.123265Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Summarise this PDF",
+      "normalized_external": [
+        "[EXTERNAL]can reuse their: \n \n✔ Documentation layout \n \nLeft sidebar \n \nVersioned docs \n \nClear sections: Installation, Configuration, Architecture \n \nCode examples in boxes \n \n✔ Dashboard-style visual design \n \nYour \"Inspection Progress UI\" can be shown like a Grafana dashboard panel: \n \nLive metrics \n \nProgress bars \n \nLogs streaming \n \nStatus indicators (green/yellow/red) \n \n✔ Typography & colors \n \nWhite background \n \nBlue highlights \n \nMinimalistic UI elements \n \n✔ Metrics-driven components [Source: uploads/Google Keep Document.pdf, Chunk: 0][/EXTERNAL]",
+        "[EXTERNAL]tic UI elements \n \n✔ Metrics-driven components \n \nYour gateway produces measurable outputs: \n \ntime taken for each inspection step \n \nanomaly score \n \nembedding score \n \nattention spike counts \n \nPrometheus-style design makes this intuitive. \n \n--- \n \n\n❗ Where it is NOT suitable \n \nDo NOT copy Prometheus for: \n \nlanding page (it’s too plain) \n \nmarketing / overview visuals \n \nuser-friendly explanation sections \n \nanimations \n \nPrometheus is very functional, not attractive. [Source: uploads/Google Keep Document.pdf, Chunk: 1][/EXTERNAL]",
+        "[EXTERNAL]Prometheus is very functional, not attractive. \n \nSo use their design for: \n \n✔ Docs \n✔ Developer guides \n✔ API reference \n✔ Integration diagrams \n \nAnd build a custom modern landing page for: \n \n✔ Overview \n✔ Demo / progress UI \n✔ Team \n✔ Project summary \n \n--- \n \n🧩 Best Approach: Hybrid Website \n \nPage 1: Modern landing (React + Tailwind / slides-style UI) \n \nPretty UI, animations, visuals. \n \nPages 2–5: Prometheus-style docs \n \nDeveloper-facing documentation in Prometheus layout: [Source: uploads/Google Keep Document.pdf, Chunk: 2][/EXTERNAL]",
+        "[EXTERNAL]per-facing documentation in Prometheus layout: \n \n/docs/introduction \n \n/docs/installation \n \n/docs/integration/ollama \n \n/docs/api \n \n\n/docs/architecture \n \n/docs/manual \n \n/docs/security-model \n \nPage 6: Grafana-like Dashboard Demo \n \nThis is where your real-time inspection UI fits: \n \nprogress bars \n \nlog stream \n \nanomaly scores \n \nrisk meter \n \nper-step breakdown \n \nThis is the most impressive part. \n \n--- \n \n🛠 How to Implement a Prometheus-Style Website [Source: uploads/Google Keep Document.pdf, Chunk: 3][/EXTERNAL]",
+        "[EXTERNAL]🛠 How to Implement a Prometheus-Style Website \n \nYou can copy the structure using: \n \n🔹 Option 1: Docusaurus (Best choice) \n \nThis framework is literally used for developer docs like Prometheus. \n \nPros: \n \nSidebars like Prometheus \n \nVersioned docs \n \nAutomatic search \n \nEasy Markdown \n \nExtremely professional \n \nPerfect for your documentation section. \n \n--- \n \n\n🔹 Option 2: Hugo (Static site like Prometheus itself) \n \nPrometheus is built using Hugo Themes. [Source: uploads/Google Keep Document.pdf, Chunk: 4][/EXTERNAL]",
+        "[EXTERNAL]itself) \n \nPrometheus is built using Hugo Themes. \n \nPros: \n \nVery fast \n \nSame clean layout \nCons: \n \nSteeper learning curve than Docusaurus \n \n--- \n \n🔹 Option 3: React + Tailwind + custom sidebar \n \nFor full control and design freedom. \n \n--- \n \n🎯 Final Recommendation \n \n✔ Use Prometheus-style design for: \n \nDeveloper docs \n \nArchitecture breakdown \n \nIntegration guides \n \nAPI documentation \n \n✔ Use a custom modern UI for: \n \nLanding page \n \nReal-time inspection progress animation [Source: uploads/Google Keep Document.pdf, Chunk: 5][/EXTERNAL]",
+        "[EXTERNAL]age \n \nReal-time inspection progress animation \n \nLive demo \n \nDashboard UI \n \n✔ Use Docusaurus to replicate Prometheus docs easily \n \nThis gives you instant: \n \nsidebars \n\n \nclean typography \n \ncode block styling \n \ntables \n \nversioning \n \nsearch [Source: uploads/Google Keep Document.pdf, Chunk: 6][/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "3360260a1b9a1886ad6b8fdbb28c802f4e77d8d9407c47dc380d58450b857165",
+        "9749505cc1bc58059be61aca5da3e22eb5a0bf18601bc5d53cc10cd0be289041",
+        "12c4cd7233704cba513c8d3ca1de5e9605a2eff44041af7819eb2b21347c4d40",
+        "77bc3ae1bca105dca5027b724f5c92125cc0f35069c89df809938115f7516c43",
+        "d1212a67578b0bd6c51537d5fb067a1f234f83b3facd7ab8dc237daf046a9b42",
+        "d6f8c35b7f554aa2278af12521955f63f6069860054b4034fd13b85b10077ff5",
+        "23cbe1e8bead84bc82eb947f340e8c651232145b3188543e4793df530e178f12"
+      ],
+      "stats": {
+        "char_total": 3655,
+        "token_estimate": 793,
+        "user_external_ratio": 0.005,
+        "file_chunks_count": 7,
+        "extracted_total_chars": 3113
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "1aab223d-f3de-4f30-8291-b07d337b33fc",
+      "timestamp": "2025-11-22T05:35:41.122916Z",
+      "session_id": "d4d8d8d9-661d-43aa-bf43-7e17745222fd",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": true,
+      "file_info": {
+        "original_path": "uploads/Google Keep Document.pdf",
+        "hash": "da3d1d78cc2d4173265d9997a3fad364ab9aa4f621bcb75d42e85825db43db1c",
+        "type": "pdf",
+        "chunk_count": 7,
+        "extraction_success": true,
+        "extraction_error": null
+      },
+      "prep_time_ms": 9.28807258605957,
+      "step_times": {
+        "parse_validate": 0.2961158752441406,
+        "file_extraction": 7.205963134765625,
+        "rag_processing": 0.07939338684082031,
+        "normalization": 0.09846687316894531,
+        "media_processing": 0.012874603271484375,
+        "token_calculation": 1.0769367218017578
+      }
+    }
+  }
+}

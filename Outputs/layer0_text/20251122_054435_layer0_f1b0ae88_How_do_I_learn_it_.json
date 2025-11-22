@@ -1,0 +1,49 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-22T05:44:35.591893Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "How do I learn it?",
+      "normalized_external": [
+        "[CONVERSATION]Previous conversation context:\nUser: What is Python?[/CONVERSATION]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "19bb8f976080a997c024ea4bdf9802b9b63148eb1e5203fbfa960ac0c9b9dee6"
+      ],
+      "stats": {
+        "char_total": 99,
+        "token_estimate": 26,
+        "user_external_ratio": 0.182,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "f1b0ae88-e682-4902-a74e-15672924cfe2",
+      "timestamp": "2025-11-22T05:44:35.591675Z",
+      "session_id": "728925a4-abad-4e13-b692-23404ad1668b",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.5147457122802734,
+      "step_times": {
+        "parse_validate": 0.027894973754882812,
+        "file_extraction": 0.016927719116210938,
+        "rag_processing": 0.043392181396484375,
+        "normalization": 0.018835067749023438,
+        "media_processing": 0.007867813110351562,
+        "token_calculation": 0.06413459777832031
+      }
+    }
+  }
+}

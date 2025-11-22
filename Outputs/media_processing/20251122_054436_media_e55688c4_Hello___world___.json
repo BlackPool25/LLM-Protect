@@ -1,0 +1,52 @@
+{
+  "processing_type": "media_processing",
+  "saved_at": "2025-11-22T05:44:36.171706Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Hello 😀 world 🌍!",
+      "normalized_external": [],
+      "emoji_descriptions": [
+        ":grinning_face:",
+        ":globe_showing_Europe-Africa:"
+      ],
+      "hmacs": [],
+      "stats": {
+        "char_total": 16,
+        "token_estimate": 7,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 2,
+        "types": [
+          "😀",
+          "🌍"
+        ],
+        "descriptions": [
+          ":grinning_face:",
+          ":globe_showing_Europe-Africa:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "e55688c4-9ff7-441b-9379-2e2a99bd2363",
+      "timestamp": "2025-11-22T05:44:36.171612Z",
+      "session_id": null,
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 3.0448436737060547,
+      "step_times": {
+        "parse_validate": 0.05173683166503906,
+        "normalization": 2.9115676879882812,
+        "media_processing": 0.011920928955078125,
+        "token_calculation": 0.04649162292480469
+      }
+    }
+  }
+}

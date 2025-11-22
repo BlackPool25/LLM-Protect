@@ -1,9 +1,9 @@
 {
   "processing_type": "layer0_text",
-  "saved_at": "2025-11-22T04:52:55.468931Z",
+  "saved_at": "2025-11-22T05:50:43.484725Z",
   "prepared_input": {
     "text_embed_stub": {
-      "normalized_user": "Help me a C++ program which dynamically makes a linked list",
+      "normalized_user": "Explain this DSA Program with example",
       "normalized_external": [
         "[EXTERNAL]#include <stdio.h> \n#include<stdlib.h> \n#define size 10 \nint top = -1; \nint stack[size]; \nvoid push(int item) \n{ \n    if(top == size-1) \n        printf(\"\\nStack is Full or Stack Overflow. Push operation \nis not allowed\\n\"); \n    else \n    { \n        top++; \n        stack[top] = item; \n        printf(\"\\nElement is pushed\\n\"); \n    } \n} \nvoid pop() \n{ \n    int item; \n    if (top == -1) \n        printf(\"\\nStack is Empty. Pop operation is not \nallowed\\n\"); \n    else \n    { [Source: uploads/Dsa.pdf, Chunk: 0][/EXTERNAL]",
         "[EXTERNAL]operation is not \nallowed\\n\"); \n    else \n    { \n        item = stack[top]; \n        top--; \n        printf(\"\\n%d is popped from stack\\n\",item); \n    } \n} \nvoid display() \n{ \n    printf(\"\\nCurrent status of stack is:\\n\"); \n    for(int i=0; i<=top; i++) \n    { \n        printf(\"%d\\t\",stack[i]); \n    } \n} \nvoid isEmpty() \n{ \n    if (top == -1) \n        printf(\"\\nStack is Empty\\n\"); \n} \nvoid isFull() \n{ \n    if (top == size-1) \n        printf(\"\\nStack is Full or Stack Overflow\\n\"); [Source: uploads/Dsa.pdf, Chunk: 1][/EXTERNAL]",
@@ -11,7 +11,12 @@
         "[EXTERNAL]case 1: printf(\"Enter an element to push\\n\"); \n                scanf(\"%d\",&item); \n                push(item); \n                break; \n            case 2: pop(); \n                break; \n            case 3: display(); \n                break; \n            case 4: isEmpty(); \n                break; \n            case 5: isFull(); \n                break; \n            case 6: item1 = peek(); \n                printf(\"\\nTop most element of stack is \n%d\\n\",item1); \n                break; [Source: uploads/Dsa.pdf, Chunk: 3][/EXTERNAL]",
         "[EXTERNAL]stack is \n%d\\n\",item1); \n                break; \n            case 7: exit(0); \n                break; \n            default: printf(\"\\nWrong choice\\n\"); \n        } \n    } \n     \n} \n\nFollowing questions to be answered in lab record: \n1. Since arrays have a fixed size, how would you handle situations \nwhere the number of elements in a stack exceeds the initial \ncapacity of the array? \n2. What are the trade-offs between stack using dynamic array and \nstatic array? \n3. [Source: uploads/Dsa.pdf, Chunk: 4][/EXTERNAL]",
         "[EXTERNAL]stack using dynamic array and \nstatic array? \n3. Describe how a stack overflow condition is handled in an array-\nbased implementation of a stack. How would you modify the \nimplementation to avoid overflow errors or handle them more \nefficiently? \n4. Write a pop() function which prints the index of top element \nand returns the element to main() function. \nNOTE: Answer limit is maximum 50 words per question. [Source: uploads/Dsa.pdf, Chunk: 5][/EXTERNAL]",
-        "[EXTERNAL]User is an experienced vibe coder[/EXTERNAL]"
+        "[EXTERNAL]user is a begineer in DSA[/EXTERNAL]",
+        "[EXTERNAL]Data Structures and Algorithms (DSA) is the study of organizing and manipulating data efficiently. It includes arrays, linked lists, stacks, queues, trees, graphs, sorting, and searching algorithms.[/EXTERNAL]",
+        "[EXTERNAL]To learn DSA effectively: Start with basic data structures, practice coding problems daily, understand time complexity, solve LeetCode problems, and focus on understanding rather than memorization.[/EXTERNAL]",
+        "[EXTERNAL]A stack is a linear data structure that follows LIFO (Last In First Out) principle. Common operations include push (add element), pop (remove element), and peek (view top element).[/EXTERNAL]",
+        "[EXTERNAL]Prompt injection is a security vulnerability where attackers manipulate LLM inputs to bypass safety measures or extract sensitive information.[/EXTERNAL]",
+        "[EXTERNAL]HMAC (Hash-based Message Authentication Code) ensures data integrity and authenticity using cryptographic hash functions and secret keys.[/EXTERNAL]"
       ],
       "emoji_descriptions": [],
       "hmacs": [
@@ -21,12 +26,17 @@
         "6ac021dbb85b4608f99079cecb7a63eb42bacf0b4c7328dd69e51f399681e2f3",
         "dbdef70109287fda3c2b0261ed43c9cd88107ef94bcb90cdfd9f7e64af6e7fe7",
         "32410c5ad822005599f33a1c5d82a03edc2fe7c16c06e75754a5a021b9a3ea4d",
-        "c3ef02db54541054d7df84a08deea5f49aa22ac468b65eb8a61f01f12dc69c98"
+        "0560d52b101f9d3b7666ed077ce5a2bfbdb303f94d85031ab113fe6b443b2eb8",
+        "b57847c8f31bdb80c58c618c9f48dccddcb06f75b8c23ba25b6908c153593733",
+        "fc8a34cd5066e446f4b9f5d76e52956f3ace3b766a3835cee8c3a5047f38e5cb",
+        "64c8a1ce34c06d8b7bb1e1955ae935c5cdfb8b3e6d514ad1c8622135c2ea3003",
+        "d2c7ea9d139260f6917bd55735591382a211c247d33eae50b4f90dd896b44f87",
+        "4b055464522f25b4510c59d0adf1cb50a01705b421b7775020207c265e45364b"
       ],
       "stats": {
-        "char_total": 3252,
-        "token_estimate": 875,
-        "user_external_ratio": 0.018,
+        "char_total": 4186,
+        "token_estimate": 1059,
+        "user_external_ratio": 0.009,
         "file_chunks_count": 6,
         "extracted_total_chars": 2791
       }
@@ -40,8 +50,9 @@
       }
     },
     "metadata": {
-      "request_id": "b88363b5-92d8-4e29-a33e-7956c13c07c6",
-      "timestamp": "2025-11-22T04:52:55.468623Z",
+      "request_id": "9bebf774-3740-4150-84eb-fcfd6fffd2ed",
+      "timestamp": "2025-11-22T05:50:43.484465Z",
+      "session_id": "4fcaad6a-5ab7-4239-9151-4656f6f070ec",
       "rag_enabled": true,
       "has_media": false,
       "has_file": true,
@@ -53,14 +64,14 @@
         "extraction_success": true,
         "extraction_error": null
       },
-      "prep_time_ms": 8.030176162719727,
+      "prep_time_ms": 531.702995300293,
       "step_times": {
-        "parse_validate": 0.2651214599609375,
-        "file_extraction": 6.04248046875,
-        "rag_processing": 0.11372566223144531,
-        "normalization": 0.12183189392089844,
-        "media_processing": 0.0133514404296875,
-        "token_calculation": 1.0933876037597656
+        "parse_validate": 0.3204345703125,
+        "file_extraction": 5.981683731079102,
+        "rag_processing": 524.0004062652588,
+        "normalization": 0.03147125244140625,
+        "media_processing": 0.018596649169921875,
+        "token_calculation": 0.7381439208984375
       }
     }
   }
