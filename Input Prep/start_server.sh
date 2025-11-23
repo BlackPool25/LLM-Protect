@@ -1,8 +1,8 @@
 #!/bin/bash
 # Start LLM-Protect server with AMD GPU support
 
-cd /home/lightdesk/Projects/LLM-Protect
-source venv/bin/activate
+cd "/home/lightdesk/Projects/LLM-Protect/Input Prep"
+source ../venv/bin/activate
 
 # AMD GPU settings for RX 7900 GRE (RDNA3)
 export HSA_OVERRIDE_GFX_VERSION=11.0.0

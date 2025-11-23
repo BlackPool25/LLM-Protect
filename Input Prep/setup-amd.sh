@@ -4,6 +4,8 @@
 
 set -e
 
+cd "$(dirname "$0")"
+
 echo "🛡️  LLM-Protect Setup Script (AMD GPU Edition)"
 echo "=============================="
 echo ""

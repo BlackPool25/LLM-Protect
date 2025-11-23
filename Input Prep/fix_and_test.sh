@@ -1,7 +1,7 @@
 #!/bin/bash
 # Quick fix for pytest-asyncio and run tests
 
-cd /home/lightdesk/Projects/LLM-Protect
+cd "/home/lightdesk/Projects/LLM-Protect/Input Prep"
 
 # Check if venv is activated
 if [ -z "$VIRTUAL_ENV" ]; then
