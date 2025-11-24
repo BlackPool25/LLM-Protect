@@ -1,0 +1,24 @@
+{
+  "request_id": "b9ff12ef-dba0-49a0-a444-3108ad542875",
+  "timestamp": "20251124_010348",
+  "image_metadata": {},
+  "emoji_data": [
+    {
+      "char": "❤",
+      "desc": ":red_heart:"
+    },
+    {
+      "char": "🎉",
+      "desc": ":party_popper:"
+    },
+    {
+      "char": "🚀",
+      "desc": ":rocket:"
+    },
+    {
+      "char": "😀",
+      "desc": ":grinning_face:"
+    }
+  ],
+  "note": "This media is stored temporarily for further layer processing"
+}

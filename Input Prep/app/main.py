@@ -6,6 +6,7 @@ Provides endpoints for text and media preparation with HMAC verification.
 
 import time
 import os
+from datetime import datetime
 from typing import Optional, List
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, status, Request
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -431,6 +432,35 @@ async def prepare_text_input(
             logger.info(f"[{request_id}] File chunks: {stats.file_chunks_count}")
             logger.info(f"[{request_id}] Extracted file chars: {stats.extracted_total_chars}")
             
+            # Step 6.5: Layer 0 Analysis (Unicode + Heuristics)
+            step_start = time.time()
+            attachment_texts = []
+            if image_dict and "description" in image_dict and image_dict["description"]:
+                attachment_texts.append(image_dict["description"])
+            
+            layer0_output = prepare_layer0_output(
+                request_id=request_id,
+                timestamp=datetime.utcnow().isoformat() + 'Z',
+                user_text=normalized_user,
+                external_texts=normalized_external,
+                hmac_verified=len(hmacs) == len(normalized_external),
+                emoji_count=emoji_summary.count,
+                emoji_descriptions=user_emoji_descs,
+                token_count=stats.token_estimate,
+                char_total=stats.char_total,
+                attachment_texts=attachment_texts,
+                prep_time_ms=(time.time() - start_time) * 1000,
+                store_raw_snapshot=True
+            )
+            step_times["layer0_analysis"] = (time.time() - step_start) * 1000
+            
+            logger.info(f"[{request_id}] ===== LAYER 0 ANALYSIS =====")
+            logger.info(f"[{request_id}] Unicode obfuscation: {layer0_output.unicode_analysis.unicode_obfuscation_flag}")
+            logger.info(f"[{request_id}] Zero-width chars: {layer0_output.unicode_analysis.zero_width_count}")
+            logger.info(f"[{request_id}] Suspicion score: {layer0_output.suspicious_score:.2%}")
+            if layer0_output.heuristic_flags.detected_patterns:
+                logger.info(f"[{request_id}] Detected patterns: {', '.join(layer0_output.heuristic_flags.detected_patterns)}")
+            
             # Step 7: Package payload
             step_start = time.time()
             total_time = (time.time() - start_time) * 1000
@@ -450,7 +480,8 @@ async def prepare_text_input(
                 has_file=bool(file_chunks),
                 file_info=file_info,
                 prep_time_ms=total_time,
-                step_times=step_times
+                step_times=step_times,
+                layer0_output=layer0_output
             )
             step_times["packaging"] = (time.time() - step_start) * 1000
             

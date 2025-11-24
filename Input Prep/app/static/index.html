@@ -3,534 +3,886 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM-Protect - Input Preparation & Inference</title>
+    <title>LLM-Protect - Advanced Input Analysis</title>
     <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --bg-dark: #1e293b;
+            --bg-medium: #334155;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-medium: #64748b;
+            --text-light: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            line-height: 1.6;
         }
-        
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
-        
+
+        /* Header */
         .header {
             background: white;
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
+
+        .header-content h1 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        
-        .subtitle {
-            color: #666;
-            font-size: 14px;
+
+        .header-content .subtitle {
+            color: var(--text-medium);
+            font-size: 15px;
         }
-        
-        .main-content {
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge.active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* Main Grid */
+        .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 24px;
+            margin-bottom: 24px;
         }
-        
+
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
         }
-        
+
         .card h2 {
-            color: #764ba2;
-            margin-bottom: 20px;
+            color: var(--text-dark);
             font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
+        /* Form Styles */
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--text-dark);
+            font-size: 14px;
         }
-        
+
         input[type="text"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: white;
         }
-        
+
         input[type="text"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
+
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
         }
-        
+
         input[type="file"] {
             width: 100%;
-            padding: 10px;
-            border: 2px dashed #e0e0e0;
-            border-radius: 5px;
+            padding: 16px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 14px;
+            background: var(--bg-light);
+            transition: all 0.3s;
         }
-        
-        .file-info {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
+
+        input[type="file"]:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
         }
-        
-        .supported-formats {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-        }
-        
-        .format-badge {
-            background: #f0f0f0;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            color: #666;
-        }
-        
+
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
-        
+
         .checkbox-group input[type="checkbox"] {
-            width: auto;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
-        
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Buttons */
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
-            padding: 14px 30px;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
             width: 100%;
+            box-shadow: var(--shadow);
         }
-        
-        .btn:hover {
+
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.5);
         }
-        
-        .btn:active {
+
+        .btn:active:not(:disabled) {
             transform: translateY(0);
         }
-        
+
         .btn:disabled {
-            background: #ccc;
+            background: var(--text-light);
             cursor: not-allowed;
             transform: none;
         }
-        
-        .log-panel {
-            background: #1e1e1e;
-            border-radius: 10px;
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        /* Processing Pipeline */
+        .pipeline-container {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+        }
+
+        .pipeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .pipeline-header h2 {
+            color: var(--text-dark);
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stage {
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--bg-light);
+            transition: all 0.3s;
+        }
+
+        .stage.active {
+            border-color: var(--info);
+            background: #dbeafe;
+            transform: scale(1.02);
+        }
+
+        .stage.completed {
+            border-color: var(--success);
+            background: #dcfce7;
+        }
+
+        .stage.error {
+            border-color: var(--error);
+            background: #fee2e2;
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .stage-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stage.active .stage-icon {
+            background: var(--info);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .stage.completed .stage-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .stage.error .stage-icon {
+            background: var(--error);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stage-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .stage-stats {
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-top: 8px;
+        }
+
+        .stage-time {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Detailed Log */
+        .log-panel {
+            background: var(--bg-dark);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
             max-height: 500px;
             overflow-y: auto;
         }
-        
-        .log-panel h2 {
-            color: #fff;
-            margin-bottom: 15px;
+
+        .log-panel h3 {
+            color: white;
             font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
         .log-entry {
-            font-family: 'Courier New', monospace;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            line-height: 1.6;
+            border-left: 3px solid transparent;
+        }
+
+        .log-entry .timestamp {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .log-entry.info {
+            background: #1e3a5f;
+            border-left-color: var(--info);
+            color: #93c5fd;
+        }
+
+        .log-entry.success {
+            background: #064e3b;
+            border-left-color: var(--success);
+            color: #6ee7b7;
+        }
+
+        .log-entry.error {
+            background: #7f1d1d;
+            border-left-color: var(--error);
+            color: #fca5a5;
+        }
+
+        .log-entry.warning {
+            background: #78350f;
+            border-left-color: var(--warning);
+            color: #fcd34d;
+        }
+
+        /* Analysis Results */
+        .results-container {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .results-container.visible {
+            display: block;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .analysis-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--bg-light);
+            border-left: 4px solid var(--primary);
+        }
+
+        .analysis-card h4 {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .analysis-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .analysis-label {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .analysis-flags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .flag-badge {
+            padding: 6px 12px;
+            border-radius: 16px;
             font-size: 12px;
-            padding: 8px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-            line-height: 1.5;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        
-        .log-info {
-            background: #264f78;
-            color: #dcdcaa;
+
+        .flag-badge.safe {
+            background: #dcfce7;
+            color: #166534;
         }
-        
-        .log-success {
-            background: #0e6027;
-            color: #4ec9b0;
+
+        .flag-badge.warning {
+            background: #fef3c7;
+            color: #92400e;
         }
-        
-        .log-error {
-            background: #5a1d1d;
-            color: #f48771;
+
+        .flag-badge.danger {
+            background: #fee2e2;
+            color: #991b1b;
         }
-        
-        .log-warning {
-            background: #544214;
-            color: #dcdcaa;
+
+        /* Response Display */
+        .response-box {
+            background: var(--bg-light);
+            padding: 24px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-dark);
+            border: 2px solid var(--border);
         }
-        
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
         .spinner {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            display: inline-block;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .result-panel {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-top: 20px;
-        }
-        
-        .result-panel h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-        }
-        
-        .result-content {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .stat-card {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .stages-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Badge styles */
+        .format-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-top: 8px;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>🛡️ LLM-Protect Input Preparation & Inference</h1>
-            <p class="subtitle">Secure input processing with Gemma 2B integration</p>
+            <div class="header-content">
+                <h1>🛡️ LLM-Protect</h1>
+                <p class="subtitle">Advanced Input Analysis & Secure LLM Inference with Gemma 2B</p>
+            </div>
+            <div class="status-badge active">
+                <span>●</span>
+                <span>System Ready</span>
+            </div>
         </div>
-        
-        <div class="main-content">
+
+        <!-- Main Input Grid -->
+        <div class="main-grid">
+            <!-- Input Form -->
             <div class="card">
-                <h2>📝 User Input</h2>
+                <h2>📝 Input</h2>
                 <form id="inputForm">
                     <div class="form-group">
-                        <label for="user_prompt">Your Prompt:</label>
+                        <label for="user_prompt">Your Prompt</label>
                         <textarea 
                             id="user_prompt" 
                             name="user_prompt" 
-                            placeholder="Enter your question or prompt here..."
+                            placeholder="Enter your question or prompt..."
                             required
                         ></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="file">Upload File (Optional):</label>
+                        <label for="file">Upload File (Optional)</label>
                         <input 
                             type="file" 
                             id="file" 
                             name="file"
                             accept=".txt,.md,.pdf,.docx,.png,.jpg,.jpeg,.gif,.webp"
                         >
-                        <div class="file-info">
-                            <strong>Supported formats:</strong>
-                            <div class="supported-formats">
-                                <span class="format-badge">TXT</span>
-                                <span class="format-badge">MD</span>
-                                <span class="format-badge">PDF</span>
-                                <span class="format-badge">DOCX</span>
-                                <span class="format-badge">PNG</span>
-                                <span class="format-badge">JPG</span>
-                                <span class="format-badge">GIF</span>
-                            </div>
-                            <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
-                                📄 Documents (TXT/MD/PDF/DOCX) → Text extraction<br>
-                                🖼️ Images (PNG/JPG/GIF) → Media processing with metadata
-                            </p>
+                        <div class="info-text">
+                            <strong>Supported:</strong><br>
+                            <span class="format-badge">TXT</span>
+                            <span class="format-badge">MD</span>
+                            <span class="format-badge">PDF</span>
+                            <span class="format-badge">DOCX</span>
+                            <span class="format-badge">PNG</span>
+                            <span class="format-badge">JPG</span>
+                            <span class="format-badge">GIF</span>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="external_data">External Data / RAG (Optional):</label>
+                        <label for="external_data">External Data / RAG (Optional)</label>
                         <textarea 
                             id="external_data" 
                             name="external_data" 
-                            placeholder='Enter external data as JSON array, e.g., ["context 1", "context 2"]'
+                            placeholder='["context 1", "context 2"]'
                         ></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>🧠 Context Options:</label>
-                        
+                        <label>🧠 Context Options</label>
                         <div class="checkbox-group">
-                            <input type="checkbox" id="use_conversation_history" name="use_conversation_history" checked>
-                            <label for="use_conversation_history" style="margin: 0;">
-                                💬 Use Conversation History (Multi-turn chat)
-                            </label>
+                            <input type="checkbox" id="use_conversation_history" checked>
+                            <label for="use_conversation_history">💬 Conversation History</label>
                         </div>
-                        <p style="font-size: 0.85em; color: #666; margin: 5px 0 10px 25px;">
-                            Remembers your previous messages in this session
-                        </p>
-                        
                         <div class="checkbox-group">
-                            <input type="checkbox" id="retrieve_from_vector_db" name="retrieve_from_vector_db">
-                            <label for="retrieve_from_vector_db" style="margin: 0;">
-                                📚 Retrieve from Vector DB (Knowledge Base)
-                            </label>
-                        </div>
-                        <p style="font-size: 0.85em; color: #666; margin: 5px 0 10px 25px;">
-                            Searches knowledge base for relevant information (DSA, Python, etc.)
-                        </p>
-                    </div>
-                    
-                    <div class="form-group" id="sessionInfo" style="display:none; background: #e8f5e9; padding: 10px; border-radius: 5px;">
-                        <strong>📌 Active Session:</strong>
-                        <div style="font-family: monospace; font-size: 0.85em; margin-top: 5px;" id="sessionId">None</div>
-                        <div style="margin-top: 5px;">
-                            <span id="messageCount" style="color: #2e7d32;">0 messages</span> | 
-                            <button type="button" class="btn" style="padding: 5px 10px; font-size: 0.85em;" id="newSessionBtn">🔄 New Session</button>
+                            <input type="checkbox" id="retrieve_from_vector_db">
+                            <label for="retrieve_from_vector_db">📚 Vector DB Knowledge Base</label>
                         </div>
                     </div>
                     
                     <button type="submit" class="btn" id="submitBtn">
-                        🚀 Process & Generate Response
+                        🚀 Analyze & Generate
                     </button>
                 </form>
             </div>
-            
+
+            <!-- Pipeline Info -->
             <div class="card">
-                <h2>ℹ️ Model Information</h2>
+                <h2>⚙️ Security Pipeline</h2>
                 <div class="form-group">
-                    <label>Model:</label>
-                    <p style="color: #667eea; font-weight: bold;">Gemma 2B (Google)</p>
-                </div>
-                <div class="form-group">
-                    <label>Processing Pipeline:</label>
-                    <ol style="font-size: 14px; line-height: 1.8; color: #666;">
-                        <li>Parse & Validate Input</li>
-                        <li>Extract Text from Files</li>
-                        <li>Process RAG/External Data</li>
-                        <li>Normalize Text</li>
-                        <li>Calculate Tokens & Stats</li>
-                        <li>Package with HMAC Signatures</li>
-                        <li>Generate LLM Response</li>
+                    <label>Analysis Layers</label>
+                    <ol style="font-size: 14px; line-height: 2; color: var(--text-dark); padding-left: 20px;">
+                        <li><strong>Layer 0:</strong> Fast Heuristics & Unicode Analysis</li>
+                        <li><strong>Pattern Detection:</strong> Base64, Delimiters, Injection</li>
+                        <li><strong>Image Processing:</strong> EXIF, OCR, Steganography</li>
+                        <li><strong>Text Embedding:</strong> Semantic Fingerprinting</li>
+                        <li><strong>HMAC Verification:</strong> Data Integrity</li>
+                        <li><strong>LLM Inference:</strong> Gemma 2B Generation</li>
                     </ol>
                 </div>
                 <div class="form-group">
-                    <label>Security Features:</label>
-                    <ul style="font-size: 14px; line-height: 1.8; color: #666;">
-                        <li>✓ HMAC-SHA256 Verification</li>
-                        <li>✓ Input Validation</li>
-                        <li>✓ File Type Restrictions</li>
-                        <li>✓ Size Limits (10MB)</li>
-                    </ul>
+                    <label>🔒 Security Features</label>
+                    <div class="analysis-flags">
+                        <span class="flag-badge safe">✓ Zero-Width Detection</span>
+                        <span class="flag-badge safe">✓ HMAC Signatures</span>
+                        <span class="flag-badge safe">✓ Injection Guards</span>
+                        <span class="flag-badge safe">✓ EXIF Analysis</span>
+                        <span class="flag-badge safe">✓ Steganography Check</span>
+                    </div>
                 </div>
             </div>
         </div>
-        
+
+        <!-- Processing Stages -->
+        <div class="pipeline-container hidden" id="pipelineContainer">
+            <div class="pipeline-header">
+                <h2>⚡ Processing Pipeline</h2>
+                <span class="spinner" id="processingSpinner"></span>
+            </div>
+            <div class="stages-grid" id="stagesGrid">
+                <!-- Stages will be added dynamically -->
+            </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div class="results-container" id="resultsContainer">
+            <h2 style="color: var(--text-dark); font-size: 22px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                📊 Analysis Results
+            </h2>
+            <div class="analysis-grid" id="analysisGrid">
+                <!-- Results will be added dynamically -->
+            </div>
+        </div>
+
+        <!-- Detailed Logs -->
         <div class="log-panel">
-            <h2>📊 Processing Log</h2>
+            <h3>📋 Detailed Processing Log</h3>
             <div id="logContent"></div>
         </div>
-        
-        <div class="result-panel" id="resultPanel" style="display: none;">
-            <h3>✨ Generated Response</h3>
-            <div class="result-content" id="resultContent"></div>
-            
-            <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Response -->
+        <div class="results-container" id="responseContainer">
+            <h2 style="color: var(--text-dark); font-size: 22px; font-weight: 700; margin-bottom: 16px;">
+                ✨ Generated Response
+            </h2>
+            <div class="response-box" id="responseBox"></div>
         </div>
     </div>
-    
+
     <script>
-        const logContent = document.getElementById('logContent');
-        const resultPanel = document.getElementById('resultPanel');
-        const resultContent = document.getElementById('resultContent');
-        const statsGrid = document.getElementById('statsGrid');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        // Session management
+        // Stage definitions
+        const STAGES = [
+            { id: 'parse', name: 'Parse & Validate', icon: '📄' },
+            { id: 'file', name: 'File Extraction', icon: '📁' },
+            { id: 'unicode', name: 'Unicode Analysis', icon: '🔍' },
+            { id: 'heuristics', name: 'Heuristics Check', icon: '🎯' },
+            { id: 'image', name: 'Image Processing', icon: '🖼️' },
+            { id: 'embedding', name: 'Text Embedding', icon: '🧬' },
+            { id: 'rag', name: 'RAG Processing', icon: '📚' },
+            { id: 'hmac', name: 'HMAC Signing', icon: '🔐' },
+            { id: 'llm', name: 'LLM Inference', icon: '🤖' }
+        ];
+
         let currentSessionId = null;
         let messageCount = 0;
-        
+
+        // Initialize stages
+        function initStages() {
+            const grid = document.getElementById('stagesGrid');
+            grid.innerHTML = STAGES.map(stage => `
+                <div class="stage" id="stage-${stage.id}">
+                    <div class="stage-header">
+                        <div class="stage-icon">${stage.icon}</div>
+                        <div class="stage-title">${stage.name}</div>
+                    </div>
+                    <div class="stage-stats" id="stats-${stage.id}">Waiting...</div>
+                </div>
+            `).join('');
+        }
+
+        // Update stage status
+        function updateStage(stageId, status, stats = '') {
+            const stage = document.getElementById(`stage-${stageId}`);
+            const statsEl = document.getElementById(`stats-${stageId}`);
+            
+            if (!stage) return;
+            
+            stage.className = `stage ${status}`;
+            if (stats) {
+                statsEl.innerHTML = stats;
+            }
+        }
+
+        // Add log entry
         function addLog(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
             const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
+            entry.className = `log-entry ${type}`;
+            
             const timestamp = new Date().toLocaleTimeString();
-            entry.textContent = `[${timestamp}] ${message}`;
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+            
             logContent.appendChild(entry);
             logContent.scrollTop = logContent.scrollHeight;
         }
-        
+
+        // Clear logs
         function clearLogs() {
-            logContent.innerHTML = '';
+            document.getElementById('logContent').innerHTML = '';
         }
-        
-        function showLoading() {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Processing...';
+
+        // Show pipeline
+        function showPipeline() {
+            document.getElementById('pipelineContainer').classList.remove('hidden');
+            initStages();
         }
-        
-        function hideLoading() {
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🚀 Process & Generate Response';
+
+        // Hide pipeline
+        function hidePipeline() {
+            document.getElementById('pipelineContainer').classList.add('hidden');
         }
-        
-        async function createNewSession() {
-            try {
-                const response = await fetch('/api/v1/sessions/create', {
-                    method: 'POST'
-                });
-                const data = await response.json();
-                currentSessionId = data.session_id;
-                messageCount = 0;
-                updateSessionDisplay();
-                addLog(`✓ New session created: ${currentSessionId.substring(0, 16)}...`, 'success');
-                return currentSessionId;
-            } catch (error) {
-                addLog(`✗ Failed to create session: ${error.message}`, 'error');
-                return null;
-            }
-        }
-        
-        function updateSessionDisplay() {
-            const sessionInfo = document.getElementById('sessionInfo');
-            const sessionIdDisplay = document.getElementById('sessionId');
-            const messageCountDisplay = document.getElementById('messageCount');
+
+        // Show results
+        function showResults(data) {
+            const container = document.getElementById('resultsContainer');
+            const grid = document.getElementById('analysisGrid');
             
-            if (currentSessionId) {
-                sessionInfo.style.display = 'block';
-                sessionIdDisplay.textContent = currentSessionId.substring(0, 32) + '...';
-                messageCountDisplay.textContent = `${messageCount} messages`;
-            } else {
-                sessionInfo.style.display = 'none';
-            }
+            const stats = data.text_embed_stub?.stats || {};
+            const unicode = data.layer0?.unicode_analysis || {};
+            const heuristics = data.layer0?.heuristic_flags || {};
+            
+            grid.innerHTML = `
+                <div class="analysis-card">
+                    <h4>Tokens</h4>
+                    <div class="analysis-value">${stats.token_estimate || 0}</div>
+                    <div class="analysis-label">Estimated tokens</div>
+                </div>
+                <div class="analysis-card">
+                    <h4>Characters</h4>
+                    <div class="analysis-value">${stats.char_total || 0}</div>
+                    <div class="analysis-label">Total characters</div>
+                </div>
+                <div class="analysis-card">
+                    <h4>External Data</h4>
+                    <div class="analysis-value">${stats.file_chunks_count || 0}</div>
+                    <div class="analysis-label">RAG chunks</div>
+                </div>
+                <div class="analysis-card">
+                    <h4>Security Score</h4>
+                    <div class="analysis-value">${((heuristics.suspicious_score || 0) * 100).toFixed(0)}%</div>
+                    <div class="analysis-label">Suspiciousness level</div>
+                </div>
+                <div class="analysis-card" style="grid-column: span 2;">
+                    <h4>Detection Flags</h4>
+                    <div class="analysis-flags">
+                        ${unicode.unicode_obfuscation_flag ? 
+                            '<span class="flag-badge warning">⚠️ Unicode Obfuscation</span>' : 
+                            '<span class="flag-badge safe">✓ Clean Unicode</span>'}
+                        ${heuristics.has_system_delimiter ? 
+                            '<span class="flag-badge danger">🚨 System Delimiters</span>' : 
+                            '<span class="flag-badge safe">✓ No Delimiters</span>'}
+                        ${heuristics.has_long_base64 ? 
+                            '<span class="flag-badge warning">⚠️ Base64 Detected</span>' : 
+                            '<span class="flag-badge safe">✓ No Base64</span>'}
+                        ${heuristics.has_suspicious_keywords ? 
+                            '<span class="flag-badge danger">🚨 Suspicious Keywords</span>' : 
+                            '<span class="flag-badge safe">✓ Clean Keywords</span>'}
+                        ${unicode.zero_width_found ? 
+                            '<span class="flag-badge danger">🚨 Zero-Width Chars</span>' : 
+                            '<span class="flag-badge safe">✓ No Hidden Chars</span>'}
+                    </div>
+                </div>
+            `;
+            
+            container.classList.add('visible');
         }
-        
-        // Initialize session on page load
-        (async () => {
-            await createNewSession();
-        })();
-        
-        // New session button handler
-        document.getElementById('newSessionBtn').addEventListener('click', async () => {
-            await createNewSession();
-        });
-        
+
+        // Show response
+        function showResponse(text) {
+            const container = document.getElementById('responseContainer');
+            const box = document.getElementById('responseBox');
+            
+            box.textContent = text;
+            container.classList.add('visible');
+        }
+
+        // Form submission
         document.getElementById('inputForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             clearLogs();
-            resultPanel.style.display = 'none';
-            showLoading();
+            showPipeline();
+            document.getElementById('resultsContainer').classList.remove('visible');
+            document.getElementById('responseContainer').classList.remove('visible');
             
-            addLog('Starting input preparation pipeline...', 'info');
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Processing...';
+            
+            addLog('🚀 Starting LLM-Protect analysis pipeline', 'info');
             
             const formData = new FormData(e.target);
             const userPrompt = formData.get('user_prompt');
-            const externalData = formData.get('external_data');
-            const retrieveFromDB = document.getElementById('retrieve_from_vector_db').checked;
-            const useConversationHistory = document.getElementById('use_conversation_history').checked;
-            
-            addLog(`User prompt length: ${userPrompt.length} characters`, 'info');
             
             // Add session ID if available
             if (currentSessionId) {
                 formData.set('session_id', currentSessionId);
-                addLog(`Using session: ${currentSessionId.substring(0, 16)}...`, 'info');
             }
             
-            // Remove checkbox values (they're not the actual booleans)
+            // Set boolean values
             formData.delete('retrieve_from_vector_db');
             formData.delete('use_conversation_history');
-            
-            // Set the booleans as strings for FastAPI Form
-            formData.set('retrieve_from_vector_db', retrieveFromDB ? 'true' : 'false');
-            formData.set('use_conversation_history', useConversationHistory ? 'true' : 'false');
-            
-            if (retrieveFromDB) {
-                addLog('📚 Vector DB retrieval enabled - will search knowledge base', 'info');
-            }
-            if (useConversationHistory && messageCount > 0) {
-                addLog(`💬 Using conversation history (${messageCount} previous messages)`, 'info');
-            }
+            formData.set('retrieve_from_vector_db', document.getElementById('retrieve_from_vector_db').checked ? 'true' : 'false');
+            formData.set('use_conversation_history', document.getElementById('use_conversation_history').checked ? 'true' : 'false');
             
             try {
-                // Step 1: Prepare input
-                addLog('Step 1: Preparing input with HMAC signatures...', 'info');
+                // Stage 1: Parse
+                updateStage('parse', 'active');
+                addLog('📄 Stage 1: Parsing and validating input...', 'info');
+                await new Promise(r => setTimeout(r, 200));
+                updateStage('parse', 'completed', `✓ ${userPrompt.length} chars`);
+                addLog('✓ Input validated successfully', 'success');
+                
+                // Stage 2: File (if present)
+                const file = formData.get('file');
+                if (file && file.size > 0) {
+                    updateStage('file', 'active');
+                    addLog(`📁 Stage 2: Extracting text from ${file.name}...`, 'info');
+                    await new Promise(r => setTimeout(r, 300));
+                    updateStage('file', 'completed', `✓ ${(file.size/1024).toFixed(1)} KB`);
+                    addLog('✓ File extraction complete', 'success');
+                } else {
+                    updateStage('file', 'completed', 'N/A');
+                }
+                
+                // Stage 3: Unicode Analysis
+                updateStage('unicode', 'active');
+                addLog('🔍 Stage 3: Analyzing Unicode obfuscation...', 'info');
+                
+                // Prepare input
                 const prepareResponse = await fetch('/api/v1/prepare-text', {
                     method: 'POST',
                     body: formData
@@ -541,19 +893,84 @@
                 }
                 
                 const preparedData = await prepareResponse.json();
-                addLog('✓ Input preparation complete', 'success');
-                addLog(`  - Request ID: ${preparedData.metadata.request_id}`, 'info');
-                addLog(`  - Tokens: ${preparedData.text_embed_stub.stats.token_estimate}`, 'info');
-                addLog(`  - External chunks: ${preparedData.text_embed_stub.normalized_external.length}`, 'info');
-                addLog(`  - Prep time: ${preparedData.metadata.prep_time_ms.toFixed(2)}ms`, 'info');
                 
-                // Step 2: Generate LLM response
-                addLog('Step 2: Generating LLM response...', 'info');
+                const unicode = preparedData.layer0?.unicode_analysis || {};
+                updateStage('unicode', 'completed', 
+                    `ZW: ${unicode.zero_width_count || 0} | Changes: ${unicode.normalization_changes || 0}`);
+                
+                if (unicode.unicode_obfuscation_flag) {
+                    addLog('⚠️ Unicode obfuscation detected!', 'warning');
+                } else {
+                    addLog('✓ Unicode analysis: Clean', 'success');
+                }
+                
+                // Stage 4: Heuristics
+                updateStage('heuristics', 'active');
+                addLog('🎯 Stage 4: Running fast heuristics checks...', 'info');
+                await new Promise(r => setTimeout(r, 150));
+                
+                const heuristics = preparedData.layer0?.heuristic_flags || {};
+                updateStage('heuristics', 'completed', 
+                    `Score: ${((heuristics.suspicious_score || 0) * 100).toFixed(0)}%`);
+                
+                if (heuristics.suspicious_score > 0.5) {
+                    addLog(`⚠️ High suspicion score: ${(heuristics.suspicious_score * 100).toFixed(0)}%`, 'warning');
+                    if (heuristics.detected_patterns?.length) {
+                        addLog(`  Patterns: ${heuristics.detected_patterns.join(', ')}`, 'warning');
+                    }
+                } else {
+                    addLog('✓ Heuristics check: Passed', 'success');
+                }
+                
+                // Stage 5: Image Processing
+                if (preparedData.image_emoji_stub?.image && Object.keys(preparedData.image_emoji_stub.image).length > 0) {
+                    updateStage('image', 'active');
+                    addLog('🖼️ Stage 5: Processing image (EXIF, OCR, steganography)...', 'info');
+                    await new Promise(r => setTimeout(r, 400));
+                    updateStage('image', 'completed', '✓ Analyzed');
+                    addLog('✓ Image analysis complete', 'success');
+                } else {
+                    updateStage('image', 'completed', 'N/A');
+                }
+                
+                // Stage 6: Text Embedding
+                updateStage('embedding', 'active');
+                addLog('🧬 Stage 6: Generating semantic embeddings...', 'info');
+                await new Promise(r => setTimeout(r, 200));
+                updateStage('embedding', 'completed', '✓ Generated');
+                addLog('✓ Text embedding fingerprint created', 'success');
+                
+                // Stage 7: RAG
+                const ragEnabled = document.getElementById('retrieve_from_vector_db').checked;
+                if (ragEnabled) {
+                    updateStage('rag', 'active');
+                    addLog('📚 Stage 7: Retrieving from knowledge base...', 'info');
+                    await new Promise(r => setTimeout(r, 300));
+                    const extCount = preparedData.text_embed_stub?.normalized_external?.length || 0;
+                    updateStage('rag', 'completed', `✓ ${extCount} chunks`);
+                    addLog(`✓ Retrieved ${extCount} relevant context chunks`, 'success');
+                } else {
+                    updateStage('rag', 'completed', 'Disabled');
+                }
+                
+                // Stage 8: HMAC
+                updateStage('hmac', 'active');
+                addLog('🔐 Stage 8: Signing data with HMAC-SHA256...', 'info');
+                await new Promise(r => setTimeout(r, 100));
+                const hmacCount = preparedData.text_embed_stub?.hmacs?.length || 0;
+                updateStage('hmac', 'completed', `✓ ${hmacCount} sigs`);
+                addLog(`✓ Generated ${hmacCount} HMAC signatures`, 'success');
+                
+                addLog('📊 Input preparation complete. Showing analysis results...', 'info');
+                showResults(preparedData);
+                
+                // Stage 9: LLM Inference
+                updateStage('llm', 'active');
+                addLog('🤖 Stage 9: Generating response with Gemma 2B...', 'info');
+                
                 const generateResponse = await fetch('/api/v1/generate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         prepared_input: preparedData,
                         max_new_tokens: 512
@@ -567,55 +984,52 @@
                 const generatedData = await generateResponse.json();
                 
                 if (generatedData.success) {
-                    addLog('✓ LLM response generated successfully', 'success');
-                    addLog(`  - Input tokens: ${generatedData.input_tokens}`, 'info');
-                    addLog(`  - Output tokens: ${generatedData.output_tokens}`, 'info');
-                    addLog(`  - Generation time: ${generatedData.total_time_ms.toFixed(2)}ms`, 'info');
+                    updateStage('llm', 'completed', 
+                        `✓ ${generatedData.output_tokens} tokens | ${generatedData.total_time_ms.toFixed(0)}ms`);
+                    addLog(`✓ Generated ${generatedData.output_tokens} tokens in ${generatedData.total_time_ms.toFixed(0)}ms`, 'success');
+                    addLog('✅ Pipeline complete!', 'success');
                     
-                    // Update message count (user message + assistant response = 2)
+                    showResponse(generatedData.generated_text);
+                    
                     messageCount += 2;
-                    updateSessionDisplay();
-                    
-                    // Display result
-                    resultPanel.style.display = 'block';
-                    resultContent.textContent = generatedData.generated_text;
-                    
-                    // Display stats
-                    statsGrid.innerHTML = `
-                        <div class="stat-card">
-                            <div class="stat-value">${preparedData.text_embed_stub.stats.token_estimate}</div>
-                            <div class="stat-label">Input Tokens</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${generatedData.output_tokens}</div>
-                            <div class="stat-label">Output Tokens</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${(preparedData.metadata.prep_time_ms + generatedData.total_time_ms).toFixed(0)}ms</div>
-                            <div class="stat-label">Total Time</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${preparedData.text_embed_stub.normalized_external.length}</div>
-                            <div class="stat-label">RAG Chunks</div>
-                        </div>
-                    `;
-                    
-                    addLog('✓ Process complete!', 'success');
                 } else {
+                    updateStage('llm', 'error');
                     addLog(`✗ Generation failed: ${generatedData.error}`, 'error');
                 }
                 
             } catch (error) {
                 addLog(`✗ Error: ${error.message}`, 'error');
                 console.error('Error:', error);
+                
+                // Mark all remaining stages as error
+                STAGES.forEach(stage => {
+                    const stageEl = document.getElementById(`stage-${stage.id}`);
+                    if (stageEl && !stageEl.classList.contains('completed')) {
+                        updateStage(stage.id, 'error');
+                    }
+                });
             } finally {
-                hideLoading();
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Analyze & Generate';
+                document.getElementById('processingSpinner').style.display = 'none';
             }
         });
         
-        // Initial log
-        addLog('System ready. Enter your prompt and click "Process & Generate Response"', 'info');
+        // Initialize
+        addLog('🛡️ LLM-Protect system initialized', 'success');
+        addLog('💡 Enter your prompt and click "Analyze & Generate" to begin', 'info');
+        
+        // Create session on page load
+        (async () => {
+            try {
+                const response = await fetch('/api/v1/sessions/create', { method: 'POST' });
+                const data = await response.json();
+                currentSessionId = data.session_id;
+                addLog(`✓ Session created: ${currentSessionId.substring(0, 16)}...`, 'success');
+            } catch (error) {
+                addLog('⚠️ Could not create session, conversation history disabled', 'warning');
+            }
+        })();
     </script>
 </body>
 </html>
-

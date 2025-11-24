@@ -1,0 +1,204 @@
+Based on my meticulous review of the Input Prep codebase against the detailed todo list plan, here's what I found:
+
+✅ IMPLEMENTED FEATURES:
+Core Infrastructure (Working Well)
+FastAPI endpoint with HMAC verification ✓
+Unicode normalization (NFKC) ✓
+Whitespace normalization ✓
+Control character removal ✓
+Emoji extraction and descriptions ✓
+Token counting (with tiktoken/fallback) ✓
+File text extraction (TXT, MD, PDF, DOCX) ✓
+RAG/external data handling with HMAC ✓
+Session management ✓
+Image basic metadata (hash, format, size, dimensions) ✓
+Chunking with overlap ✓
+Media temp storage for further processing ✓
+❌ CRITICALLY MISSING FEATURES:
+1. Zero-Width & Invisible Character Detection (HIGH PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+What's missing:
+
+No detection/removal of U+200B (zero-width space), U+2060 (word joiner), U+FEFF (BOM), etc.
+No zero_width_removed field or flag
+No unicode_obfuscation_flag
+Plan requirement:
+
+"Remove/record zero-width and invisible characters (e.g., U+200B, U+2060) and produce a masked version (zero_width_removed) plus detection flag."
+
+2. Special Character Mask (HIGH PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+What's missing:
+
+No special_char_mask field for Layer 0
+No position marking of zero-width/homoglyphs
+Plan requirement:
+
+"special_char_mask (string of same length with ./Z denoting zero-width/homoglyphs etc.)"
+
+3. Raw Text Snapshot & Unicode Diff (MEDIUM PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+What's missing:
+
+No preservation of raw_text_snapshot before normalization
+No unicode_diff tracking changes from NFKC normalization
+Plan requirement:
+
+"Keep raw snapshot in secure store... normalized_text, raw_text_snapshot, unicode_diff and boolean unicode_obfuscation_flag"
+
+4. Fast Heuristics / Pattern Detection (HIGH PRIORITY - Layer 0)
+Status: ❌ NOT IMPLEMENTED
+
+What's missing:
+
+No base64 long sequence detection
+No system delimiter detection (</system>, <|im_end|>)
+No repeated character detection
+No long single-line payload detection
+No heuristic_flags object
+Plan requirement:
+
+"run ultra-fast checks (regex for </system>, base64 long sequences, many repeated characters, long single-line payloads, suspicious control chars). Produces: heuristic_flags"
+
+Expected fields:
+
+
+"heuristic_flags": {  "has_base64": false,  "has_system_delimiter": true,  "zero_width_found": true,  "many_repeated_chars": false,  "contains_xml_tags": false,  "contains_html_comments": false}
+5. Image Processing - Missing ALL Advanced Features:
+a) Perceptual Hash (pHash) (HIGH PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+No imagehash library imported
+No pHash calculation for near-duplicate detection
+Plan requirement:
+
+"Compute sha256 and pHash (perceptual hash)... pHash (perceptual hash) for near-duplicate detection"
+
+b) EXIF Metadata Extraction (HIGH PRIORITY - ATTACK VECTOR)
+Status: ❌ NOT IMPLEMENTED
+
+No piexif or exifread library
+No extraction of EXIF Description, Artist, Software, etc.
+CRITICAL: EXIF Description is a known attack vector
+Plan requirement:
+
+"Extract EXIF/XMP metadata and save exif_description and author tags... extract textual metadata (EXIF: Description, ImageDescription)... EXIF Description is a common attack vector"
+
+Expected output:
+
+
+"exif_meta": {  "Description": "...",  "Artist": "...",  "Software": "...",  "DateTime": "..."},"embedded_text_from_exif": "...","suspicious_metadata": true/false
+c) OCR Text Extraction (MEDIUM PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+No pytesseract imported
+No OCR text extraction capability
+Plan requirement:
+
+"Optionally run OCR (Tesseract or cloud alternative) if heuristics indicate text present... ocr_text"
+
+d) Vision Caption & CLIP Embedding (MEDIUM-HIGH PRIORITY)
+Status: ⚠️ PLACEHOLDER ONLY
+
+Function generate_image_description_placeholder exists but returns "not yet implemented"
+No CLIP, BLIP, or any vision model integration
+No vision_embedding or caption generation
+Plan requirement:
+
+"Run a light vision-caption model (tiny CLIP-based or lightweight mobilenet->text) to produce caption... Compute vision_embedding (small CLIP or open CLIP)"
+
+e) Steganography Detection (MEDIUM PRIORITY)
+Status: ⚠️ PLACEHOLDER ONLY
+
+Function check_steganography_placeholder exists but returns "not implemented"
+No entropy analysis
+No LSB detection
+No stego_score or extracted payload
+Plan requirement:
+
+"Run steganography heuristics: entropy profile, LSB analysis, and a simple payload extractor for common LSB formats. Produce stego_score and any extracted payload... file_entropy, suspicious_entropy_ratio, stego_score"
+
+6. PDF Image Extraction (HIGH PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+What's missing:
+
+PDF text extraction works, but no embedded image extraction
+No processing of images inside PDFs
+Plan requirement:
+
+"Always extract embedded images (use PyMuPDF / pdfium or pdfplumber + Pillow). Treat each extracted image as a first-class attachment: compute pHash, excerpt EXIF, caption, OCR."
+
+Critical gap:
+
+"Images inside PDFs: extract all embedded images (and embedded metadata), then run the same image-processing pipeline (pHash, EXIF, caption, OCR, stego checks) on each extracted image."
+
+7. Text Embedding Fingerprint (MEDIUM PRIORITY)
+Status: ❌ NOT IMPLEMENTED
+
+No sentence-transformers usage
+No MiniLM embedding generation
+No embedding_fingerprint or embedding_fingerprint_hash
+Plan requirement:
+
+"Embedding fingerprint (lightweight): Compute a compact embedding (all-MiniLM or similar) for the normalized text. Store text_embedding_hash"
+
+8. Minimal Layer 0 Payload (PARTIALLY MISSING)
+Status: ⚠️ INCOMPLETE
+
+Current output has:
+
+✓ normalized_user, normalized_external
+✓ hmacs, stats
+✓ emoji_descriptions, emoji_summary
+✓ request_id, timestamp
+Missing for Layer 0:
+
+❌ special_char_mask
+❌ heuristic_flags
+❌ attachment_texts (EXIF + caption + OCR)
+❌ embedding_fingerprint
+❌ raw_text_snapshot pointer
+📋 SUMMARY OF CRITICAL GAPS:
+Security-Critical (Must Implement):
+Zero-width character detection - attackers use this extensively
+Fast heuristics (base64, system delimiters, injection patterns) - Layer 0 needs this
+EXIF extraction - documented attack vector
+special_char_mask - Layer 0 needs position info
+Feature-Complete (Should Implement):
+pHash - near-duplicate detection
+PDF image extraction - large attack surface
+Vision captions - understand image content
+Text embeddings - semantic detection
+Nice-to-Have (Can Defer):
+OCR - selective, resource-intensive
+Steganography - advanced threat, low frequency
+Unicode diff tracking - forensic analysis
+🔧 HANDLING ASSESSMENT:
+What's Being Handled Well:
+✅ Basic text normalization and chunking
+✅ HMAC integrity verification
+✅ File type validation and size limits
+✅ RAG/external data separation
+✅ Session and conversation management
+✅ Basic emoji processing
+What's NOT Being Handled Properly:
+❌ No protection against zero-width obfuscation (documented attack)
+❌ No fast pattern detection (injection attempts will pass through)
+❌ No image metadata analysis (blind to EXIF attacks)
+❌ No PDF embedded images (large attack surface ignored)
+❌ No semantic understanding (no embeddings/captions)
+📊 IMPLEMENTATION COMPLETENESS:
+
+Total Plan Items: ~35 major features✅ Implemented: ~15 (43%)⚠️ Partial/Placeholder: ~5 (14%)❌ Missing: ~15 (43%)
+Critical Features Missing: 8/15 (53%)
+
+The current implementation provides a solid foundation but is missing critical security features from the plan, particularly around:
+
+Unicode obfuscation detection
+Fast heuristic pattern matching
+Advanced image analysis (EXIF, pHash, vision models)
+PDF image extraction

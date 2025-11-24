@@ -15,7 +15,9 @@ from app.models.schemas import (
     MetadataInfo,
     StatsInfo,
     FileInfo,
-    EmojiSummary
+    EmojiSummary,
+    Layer0Output,
+    ImageProcessingOutput
 )
 from app.utils.logger import get_logger
 
@@ -42,7 +44,11 @@ def package_payload(
     has_file: bool = False,
     file_info: Optional[FileInfo] = None,
     prep_time_ms: float = 0.0,
-    step_times: Optional[Dict[str, float]] = None
+    step_times: Optional[Dict[str, float]] = None,
+    
+    # Advanced analysis
+    layer0_output: Optional[Layer0Output] = None,
+    image_processing_output: Optional[ImageProcessingOutput] = None
 ) -> PreparedInput:
     """
     Package all processed data into final PreparedInput format.
@@ -127,7 +133,9 @@ def package_payload(
     prepared_input = PreparedInput(
         text_embed_stub=text_embed_stub,
         image_emoji_stub=image_emoji_stub,
-        metadata=metadata
+        metadata=metadata,
+        layer0=layer0_output,
+        image_processing=image_processing_output
     )
     
     logger.info(

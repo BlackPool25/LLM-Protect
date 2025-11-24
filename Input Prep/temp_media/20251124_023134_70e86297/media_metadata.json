@@ -1,0 +1,29 @@
+{
+  "request_id": "70e86297-4c1f-44c8-8a6d-3a3579288acb",
+  "timestamp": "20251124_023134",
+  "image_metadata": {
+    "hash": "8a4e09861b527d97963b8fdcfd08a607d5f8aeae0161f4cd8d4f6d0b84e1ca82",
+    "format": "png",
+    "size_bytes": 1891313,
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "description": null
+  },
+  "emoji_data": [
+    {
+      "char": "🧠",
+      "desc": ":brain:"
+    },
+    {
+      "char": "🍊",
+      "desc": ":tangerine:"
+    },
+    {
+      "char": "🕵",
+      "desc": ":detective:"
+    }
+  ],
+  "note": "This media is stored temporarily for further layer processing"
+}
