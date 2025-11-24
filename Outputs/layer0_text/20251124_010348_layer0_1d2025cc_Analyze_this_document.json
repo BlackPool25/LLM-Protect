@@ -1,0 +1,56 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-24T01:03:48.995111Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Analyze this document",
+      "normalized_external": [
+        "[EXTERNAL]This is a test document.\nIt contains multiple lines of text.\nThis will be chunked and processed by the system.\n\nEach chunk will be signed with an HMAC for integrity verification.\nThe system supports TXT, MD, PDF, and DOCX files. [Source: uploads/test_document.txt, Chunk: 0][/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "87483ac17eb7e4f5f3b201ea0296bb906749f089f9f57b08421cba3b0894e8c3"
+      ],
+      "stats": {
+        "char_total": 316,
+        "token_estimate": 72,
+        "user_external_ratio": 0.066,
+        "file_chunks_count": 1,
+        "extracted_total_chars": 228
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "1d2025cc-5571-4f20-8390-6513f1d09c6a",
+      "timestamp": "2025-11-24T01:03:48.994770Z",
+      "session_id": "c1e68a42-1c90-4288-8773-81eacd6570d3",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": true,
+      "file_info": {
+        "original_path": "uploads/test_document.txt",
+        "hash": "c54276f49828dc2eb0d297ca5e067d61f161610e6c7a51ca1d2dd5f20c5258e1",
+        "type": "txt",
+        "chunk_count": 1,
+        "extraction_success": true,
+        "extraction_error": null
+      },
+      "prep_time_ms": 1.2240409851074219,
+      "step_times": {
+        "parse_validate": 0.2598762512207031,
+        "file_extraction": 0.2779960632324219,
+        "rag_processing": 0.05173683166503906,
+        "normalization": 0.0209808349609375,
+        "media_processing": 0.007152557373046875,
+        "token_calculation": 0.12683868408203125
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-24T01:03:48.991662Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Tell me about today's weather",
+      "normalized_external": [
+        "[EXTERNAL]The weather forecast predicts sunny conditions.[/EXTERNAL]",
+        "[EXTERNAL]Temperature will be around 25°C.[/EXTERNAL]",
+        "[EXTERNAL]No rain expected today.[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [
+        "ec1ca17a943d8e8aacb885148f6a9b9488fe779e79b2c8ca4404c34f8cfe0bfc",
+        "0938093d4976f134e8018528e46a0b22bbe84e2f81e7210cf36196c81b46ca81",
+        "0221711e545d09db69b657f6b3e7c2cde480db20a62ed8fa8d6ab5f008ac0c62"
+      ],
+      "stats": {
+        "char_total": 196,
+        "token_estimate": 44,
+        "user_external_ratio": 0.148,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "84ce307d-09d6-414a-b112-b89706a230a7",
+      "timestamp": "2025-11-24T01:03:48.991466Z",
+      "session_id": "bfa09d57-efcf-4c26-a805-1697b2f61711",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.6635189056396484,
+      "step_times": {
+        "parse_validate": 0.03218650817871094,
+        "file_extraction": 0.018596649169921875,
+        "rag_processing": 0.06103515625,
+        "normalization": 0.016450881958007812,
+        "media_processing": 0.007867813110351562,
+        "token_calculation": 0.11777877807617188
+      }
+    }
+  }
+}

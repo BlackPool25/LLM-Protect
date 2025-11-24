@@ -1,0 +1,45 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-24T02:26:44.065160Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Test prompt for unicode analysis",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 32,
+        "token_estimate": 5,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "8763135e-72d6-4f3d-8693-12fc1079a8f1",
+      "timestamp": "2025-11-24T02:26:44.064870Z",
+      "session_id": "0cec9e87-2351-4e29-a78b-6d145a94aea8",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 1.2063980102539062,
+      "step_times": {
+        "parse_validate": 0.046253204345703125,
+        "file_extraction": 0.026226043701171875,
+        "rag_processing": 0.015974044799804688,
+        "normalization": 0.1068115234375,
+        "media_processing": 0.022649765014648438,
+        "token_calculation": 0.5526542663574219
+      }
+    }
+  }
+}

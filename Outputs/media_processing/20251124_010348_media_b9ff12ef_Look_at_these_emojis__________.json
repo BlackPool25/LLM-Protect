@@ -1,0 +1,58 @@
+{
+  "processing_type": "media_processing",
+  "saved_at": "2025-11-24T01:03:48.997282Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Look at these emojis: 😀 🎉 🚀 ❤️",
+      "normalized_external": [],
+      "emoji_descriptions": [
+        ":red_heart:",
+        ":party_popper:",
+        ":rocket:",
+        ":grinning_face:"
+      ],
+      "hmacs": [],
+      "stats": {
+        "char_total": 30,
+        "token_estimate": 14,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 4,
+        "types": [
+          "❤",
+          "🎉",
+          "🚀",
+          "😀"
+        ],
+        "descriptions": [
+          ":red_heart:",
+          ":party_popper:",
+          ":rocket:",
+          ":grinning_face:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "b9ff12ef-dba0-49a0-a444-3108ad542875",
+      "timestamp": "2025-11-24T01:03:48.997226Z",
+      "session_id": null,
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 0.17952919006347656,
+      "step_times": {
+        "parse_validate": 0.04792213439941406,
+        "normalization": 0.05364418029785156,
+        "media_processing": 0.008344650268554688,
+        "token_calculation": 0.04744529724121094
+      }
+    }
+  }
+}

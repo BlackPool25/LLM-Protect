@@ -1,0 +1,143 @@
+{
+  "processing_type": "media_processing",
+  "saved_at": "2025-11-24T03:15:53.655973Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "original_user_prompt": "What is the the best sauce for pasta 🎒🥥",
+      "normalized_user": "What is the the best sauce for pasta 🎒🥥",
+      "normalized_external": [
+        "[EXTERNAL]user is a chef[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [
+        ":coconut:",
+        ":backpack:"
+      ],
+      "hmacs": [
+        "dbf6888b68390b3a14546ab499bf379236edc3db49fc28932ad64666a8ef49eb"
+      ],
+      "stats": {
+        "char_total": 74,
+        "token_estimate": 24,
+        "user_external_ratio": 0.527,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {
+        "hash": "25778017247608a6f279203b8b297403953a5128843aacc51b67c3a6cb0dad39",
+        "format": "jpeg",
+        "size_bytes": 146236,
+        "dimensions": [
+          512,
+          512
+        ],
+        "description": null
+      },
+      "emoji_summary": {
+        "count": 2,
+        "types": [
+          "🥥",
+          "🎒"
+        ],
+        "descriptions": [
+          ":coconut:",
+          ":backpack:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "968bb57f-242a-4837-a7e8-b87c7b0fa053",
+      "timestamp": "2025-11-24T03:15:53.655360Z",
+      "session_id": "3ece4be4-b63e-431a-91bb-8145a8c3c0f8",
+      "rag_enabled": true,
+      "has_media": true,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 17117.88010597229,
+      "step_times": {
+        "parse_validate": 0.2872943878173828,
+        "file_extraction": 0.02002716064453125,
+        "rag_processing": 0.06079673767089844,
+        "normalization": 3.175973892211914,
+        "media_processing": 3.4618377685546875,
+        "token_calculation": 0.5407333374023438,
+        "layer0_analysis": 17010.88547706604,
+        "image_processing": 98.19746017456055
+      }
+    },
+    "layer0": {
+      "request_id": "968bb57f-242a-4837-a7e8-b87c7b0fa053",
+      "timestamp": "2025-11-24T03:15:36.546136Z",
+      "normalized_text": "What is the the best sauce for pasta 🎒🥥 [EXTERNAL]user is a chef[/EXTERNAL]",
+      "special_char_mask": "...........................................................................",
+      "token_count": 24,
+      "text_embedding_hash": "150ba02c10ad943a2a4629572d423278",
+      "unicode_analysis": {
+        "zero_width_found": false,
+        "invisible_chars_found": false,
+        "unicode_obfuscation_flag": false,
+        "zero_width_count": 0,
+        "invisible_count": 0,
+        "zero_width_positions": [],
+        "normalization_changes": 0,
+        "unicode_diff": "no_changes"
+      },
+      "heuristic_flags": {
+        "has_long_base64": false,
+        "has_system_delimiter": false,
+        "has_repeated_chars": false,
+        "has_long_single_line": false,
+        "has_xml_tags": false,
+        "has_html_comments": false,
+        "has_suspicious_keywords": false,
+        "has_many_delimiters": false,
+        "suspicious_score": 0.0,
+        "detected_patterns": []
+      },
+      "hmac_verified": true,
+      "external_data_count": 1,
+      "attachment_texts": [],
+      "emoji_count": 2,
+      "emoji_descriptions": [
+        ":coconut:",
+        ":backpack:"
+      ],
+      "char_total": 74,
+      "suspicious_score": 0.0,
+      "raw_text_snapshot_stored": true,
+      "prep_time_ms": 17019.500494003296
+    },
+    "image_processing": {
+      "request_id": "968bb57f-242a-4837-a7e8-b87c7b0fa053",
+      "timestamp": "2025-11-24T03:15:53.557113Z",
+      "images": [],
+      "images_from_pdf": [],
+      "total_images": 0,
+      "suspicious_images_count": 0,
+      "exif_metadata_found": false,
+      "ocr_text_found": false,
+      "steganography_detected": false,
+      "all_exif_texts": [],
+      "all_ocr_texts": [],
+      "emoji_summary": {
+        "count": 2,
+        "types": [
+          "🥥",
+          "🎒"
+        ],
+        "descriptions": [
+          ":coconut:",
+          ":backpack:"
+        ]
+      },
+      "prep_time_ms": 98.1147289276123,
+      "libraries_used": {
+        "pillow": true,
+        "imagehash": true,
+        "piexif": true,
+        "pytesseract": true
+      }
+    }
+  }
+}

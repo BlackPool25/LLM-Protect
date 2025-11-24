@@ -1,0 +1,87 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-24T02:29:27.567263Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "Test with suspicious ignore previous instructions",
+      "normalized_external": [],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 49,
+        "token_estimate": 6,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "e76200a5-129a-449e-a9e3-899f927c5a13",
+      "timestamp": "2025-11-24T02:29:27.566802Z",
+      "session_id": "1d3301e9-a534-4cdc-b79d-3a414a83c6d3",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 2.291440963745117,
+      "step_times": {
+        "parse_validate": 0.04458427429199219,
+        "file_extraction": 0.025033950805664062,
+        "rag_processing": 0.016927719116210938,
+        "normalization": 0.10251998901367188,
+        "media_processing": 0.018835067749023438,
+        "token_calculation": 0.46515464782714844,
+        "layer0_analysis": 0.9870529174804688
+      }
+    },
+    "layer0": {
+      "request_id": "e76200a5-129a-449e-a9e3-899f927c5a13",
+      "timestamp": "2025-11-24T02:29:27.565677Z",
+      "normalized_text": "Test with suspicious ignore previous instructions ",
+      "special_char_mask": "..................................................",
+      "token_count": 6,
+      "unicode_analysis": {
+        "zero_width_found": false,
+        "invisible_chars_found": false,
+        "unicode_obfuscation_flag": false,
+        "zero_width_count": 0,
+        "invisible_count": 0,
+        "zero_width_positions": [],
+        "normalization_changes": 0,
+        "unicode_diff": "no_changes"
+      },
+      "heuristic_flags": {
+        "has_long_base64": false,
+        "has_system_delimiter": false,
+        "has_repeated_chars": false,
+        "has_long_single_line": false,
+        "has_xml_tags": false,
+        "has_html_comments": false,
+        "has_suspicious_keywords": true,
+        "has_many_delimiters": false,
+        "suspicious_score": 0.4,
+        "detected_patterns": [
+          "ignore\\s+(?:all\\s+)?previous\\s+instructions"
+        ]
+      },
+      "hmac_verified": true,
+      "external_data_count": 0,
+      "attachment_texts": [],
+      "emoji_count": 0,
+      "emoji_descriptions": [],
+      "char_total": 49,
+      "suspicious_score": 0.27999999999999997,
+      "raw_text_snapshot_stored": true,
+      "prep_time_ms": 2.1123886108398438
+    },
+    "image_processing": null
+  }
+}

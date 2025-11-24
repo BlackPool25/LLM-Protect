@@ -1,0 +1,51 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-24T01:03:48.989253Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "What is the weather like today? 🌞",
+      "normalized_external": [],
+      "emoji_descriptions": [
+        ":sun_with_face:"
+      ],
+      "hmacs": [],
+      "stats": {
+        "char_total": 33,
+        "token_estimate": 10,
+        "user_external_ratio": 1.0,
+        "file_chunks_count": 0,
+        "extracted_total_chars": 0
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 1,
+        "types": [
+          "🌞"
+        ],
+        "descriptions": [
+          ":sun_with_face:"
+        ]
+      }
+    },
+    "metadata": {
+      "request_id": "aaf9dc0d-91d2-4c66-a467-eb9ece029576",
+      "timestamp": "2025-11-24T01:03:48.988975Z",
+      "session_id": "87b5b625-0a3c-46a0-b523-c97f57eea385",
+      "rag_enabled": false,
+      "has_media": false,
+      "has_file": false,
+      "file_info": null,
+      "prep_time_ms": 4.570245742797852,
+      "step_times": {
+        "parse_validate": 0.11491775512695312,
+        "file_extraction": 0.02288818359375,
+        "rag_processing": 0.018596649169921875,
+        "normalization": 3.116130828857422,
+        "media_processing": 0.015735626220703125,
+        "token_calculation": 0.4818439483642578
+      }
+    }
+  }
+}
