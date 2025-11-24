@@ -116,6 +116,83 @@ def extract_text_from_pdf(file_path: str) -> str:
     return '\n'.join(text_parts)
 
 
+def extract_images_from_pdf(file_path: str, output_dir: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Extract embedded images from PDF file.
+    
+    Args:
+        file_path: Path to the PDF file
+        output_dir: Optional directory to save extracted images
+    
+    Returns:
+        List of dictionaries with image info and paths
+    
+    Raises:
+        ImportError: If PyMuPDF is not available
+        Exception: If PDF cannot be read or is corrupted
+    """
+    if not PYMUPDF_AVAILABLE:
+        raise ImportError("PyMuPDF is not installed. Install with: pip install PyMuPDF")
+    
+    from pathlib import Path as PathLib
+    import hashlib
+    
+    extracted_images = []
+    
+    if output_dir is None:
+        # Use temp_media directory
+        from app.config import settings
+        output_dir = settings.MEDIA_TEMP_DIR / f"pdf_images_{PathLib(file_path).stem}"
+    
+    output_path = PathLib(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        with fitz.open(file_path) as doc:
+            for page_num, page in enumerate(doc, 1):
+                # Get list of images on the page
+                image_list = page.get_images(full=True)
+                
+                for img_index, img_info in enumerate(image_list):
+                    xref = img_info[0]  # Image XREF number
+                    
+                    # Extract image
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image_ext = base_image["ext"]
+                    
+                    # Calculate hash for unique filename
+                    img_hash = hashlib.md5(image_bytes).hexdigest()[:12]
+                    
+                    # Save image
+                    image_filename = f"page{page_num}_img{img_index}_{img_hash}.{image_ext}"
+                    image_path = output_path / image_filename
+                    
+                    with open(image_path, "wb") as img_file:
+                        img_file.write(image_bytes)
+                    
+                    extracted_images.append({
+                        "page": page_num,
+                        "index": img_index,
+                        "path": str(image_path),
+                        "format": image_ext,
+                        "size_bytes": len(image_bytes),
+                        "xref": xref
+                    })
+                    
+                    logger.debug(
+                        f"Extracted image from PDF page {page_num}: "
+                        f"{image_filename} ({len(image_bytes)} bytes)"
+                    )
+    
+    except Exception as e:
+        logger.error(f"Failed to extract images from PDF: {e}")
+        raise
+    
+    logger.info(f"Extracted {len(extracted_images)} images from PDF: {file_path}")
+    return extracted_images
+
+
 def extract_text_from_docx(file_path: str) -> str:
     """
     Extract text from DOCX file using python-docx.

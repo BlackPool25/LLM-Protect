@@ -14,13 +14,17 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.config import settings
-from app.models.schemas import PreparedInput, HealthResponse, InputRequest, MediaRequest
+from app.models.schemas import (
+    PreparedInput, HealthResponse, InputRequest, MediaRequest,
+    Layer0Output, ImageProcessingOutput, EmojiSummary
+)
 from app.utils.logger import setup_logging, get_logger, RequestLogger
 from app.services.input_parser import parse_and_validate, validate_request
 from app.services.file_extractor import (
     extract_file_text,
     validate_file,
-    check_library_availability
+    check_library_availability,
+    extract_images_from_pdf
 )
 from app.services.rag_handler import process_rag_data
 from app.services.text_normalizer import normalize_text
@@ -39,6 +43,7 @@ from app.services.payload_packager import (
 from app.services.llm_service import generate_response, check_model_availability
 from app.services.output_saver import get_output_saver
 from app.services.session_manager import get_session_manager, format_conversation_for_rag
+from app.services.integration_layer import prepare_layer0_output, prepare_image_processing_output
 
 # Setup logging
 setup_logging()
@@ -124,9 +129,14 @@ async def health_check():
     file_libs = check_library_availability()
     image_available = check_image_library_availability()
     
+    # Check advanced image processing libraries
+    from app.services.advanced_image_processor import check_libraries_available
+    advanced_libs = check_libraries_available()
+    
     all_libs = {
         **file_libs,
         "image": image_available,
+        **advanced_libs
     }
     
     # Determine status
@@ -929,6 +939,224 @@ async def list_sessions():
         "sessions": session_manager.list_sessions(),
         "stats": session_manager.get_stats()
     }
+
+
+@app.post(
+    f"{settings.API_PREFIX}/prepare-layer0",
+    response_model=Layer0Output,
+    status_code=status.HTTP_200_OK,
+    summary="Prepare input for Layer 0 (Fast Heuristics)",
+    description=(
+        "Advanced endpoint for Layer 0 processing. "
+        "Includes Unicode obfuscation detection, zero-width character removal, "
+        "fast heuristic pattern matching, and special character masking. "
+        "Returns structured output optimized for Layer 0 fast processing."
+    )
+)
+async def prepare_layer0(
+    user_prompt: str = Form(..., description="User's input text"),
+    external_data: Optional[str] = Form(None, description="JSON array of external data strings"),
+    file: Optional[UploadFile] = File(None, description="Optional file upload"),
+    retrieve_from_vector_db: bool = Form(False, description="Retrieve from vector database")
+):
+    """
+    Prepare input with advanced Layer 0 analysis.
+    
+    Includes:
+    - Zero-width and invisible character detection
+    - Unicode obfuscation analysis
+    - Fast heuristic pattern matching (base64, system delimiters, etc.)
+    - Special character masking
+    - Raw text snapshot storage
+    """
+    import json
+    import uuid
+    from datetime import datetime
+    
+    start_time = time.time()
+    request_id = str(uuid.uuid4())
+    timestamp = datetime.utcnow().isoformat() + 'Z'
+    
+    # Parse external data
+    external_data_list = []
+    if external_data:
+        try:
+            external_data_list = json.loads(external_data)
+        except json.JSONDecodeError:
+            external_data_list = [external_data]
+    
+    # Handle file upload
+    file_text = ""
+    if file and file.filename:
+        from pathlib import Path
+        filename = file.filename
+        
+        if not settings.is_allowed_extension(filename):
+            raise HTTPException(
+                status_code=400,
+                detail=f"File type not allowed. Allowed: {', '.join(sorted(settings.ALLOWED_EXTENSIONS))}"
+            )
+        
+        temp_file_path = str(settings.get_file_path(filename))
+        with open(temp_file_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+        
+        try:
+            file_chunks, file_info = extract_file_text(temp_file_path)
+            if file_chunks:
+                file_text = ' '.join([chunk.content for chunk in file_chunks])
+        except Exception as e:
+            logger.error(f"File extraction failed: {e}")
+    
+    # Normalize and combine texts
+    from app.services.text_normalizer import normalize_text
+    normalized_user, user_emojis, user_emoji_descs = normalize_text(user_prompt)
+    
+    normalized_external = []
+    for ext_data in external_data_list:
+        norm, _, _ = normalize_text(ext_data)
+        normalized_external.append(norm)
+    
+    if file_text:
+        norm_file, _, _ = normalize_text(file_text)
+        normalized_external.append(norm_file)
+    
+    # RAG processing
+    from app.services.rag_handler import process_rag_data
+    external_chunks, hmacs, rag_enabled = process_rag_data(
+        user_prompt=user_prompt,
+        external_data=external_data_list,
+        file_chunks=None,
+        retrieve_from_db=retrieve_from_vector_db,
+        conversation_text=None
+    )
+    
+    # Token calculation
+    from app.services.token_processor import estimate_tokens
+    token_count = estimate_tokens(normalized_user + ' '.join(normalized_external))
+    char_total = len(normalized_user) + sum(len(ext) for ext in normalized_external)
+    
+    # Prepare Layer 0 output
+    layer0_output = prepare_layer0_output(
+        request_id=request_id,
+        timestamp=timestamp,
+        user_text=normalized_user,
+        external_texts=normalized_external,
+        hmac_verified=len(hmacs) > 0,
+        emoji_count=len(user_emojis),
+        emoji_descriptions=user_emoji_descs,
+        token_count=token_count,
+        char_total=char_total,
+        attachment_texts=[],  # Would come from images
+        prep_time_ms=(time.time() - start_time) * 1000,
+        store_raw_snapshot=True
+    )
+    
+    logger.info(
+        f"[{request_id[:8]}] Layer 0 output prepared: "
+        f"suspicious_score={layer0_output.suspicious_score:.2f}, "
+        f"unicode_obfuscation={layer0_output.unicode_analysis.unicode_obfuscation_flag}"
+    )
+    
+    return layer0_output
+
+
+@app.post(
+    f"{settings.API_PREFIX}/process-images",
+    response_model=ImageProcessingOutput,
+    status_code=status.HTTP_200_OK,
+    summary="Process images with advanced analysis",
+    description=(
+        "Advanced image processing endpoint. "
+        "Includes pHash calculation, EXIF extraction, OCR, steganography detection, "
+        "and PDF image extraction. Returns comprehensive image analysis results."
+    )
+)
+async def process_images_advanced(
+    user_prompt: str = Form(..., description="User's input text"),
+    images: Optional[List[UploadFile]] = File(None, description="Image files to process"),
+    pdf_file: Optional[UploadFile] = File(None, description="PDF file (images will be extracted)"),
+    run_ocr: bool = Form(False, description="Run OCR on images (resource intensive)"),
+    ocr_confidence: float = Form(50.0, description="OCR confidence threshold")
+):
+    """
+    Process images with comprehensive advanced analysis.
+    
+    Includes:
+    - Perceptual hash (pHash) for near-duplicate detection
+    - EXIF metadata extraction (including suspicious pattern detection)
+    - OCR text extraction (optional)
+    - Steganography detection (LSB analysis, entropy)
+    - PDF embedded image extraction and processing
+    """
+    import uuid
+    from datetime import datetime
+    
+    start_time = time.time()
+    request_id = str(uuid.uuid4())
+    timestamp = datetime.utcnow().isoformat() + 'Z'
+    
+    image_paths = []
+    pdf_path = None
+    
+    # Save uploaded images
+    if images:
+        for img_file in images:
+            if img_file.filename:
+                filename = img_file.filename
+                
+                if not settings.is_image_file(filename):
+                    continue
+                
+                temp_path = str(settings.get_file_path(filename))
+                with open(temp_path, "wb") as f:
+                    content = await img_file.read()
+                    f.write(content)
+                
+                image_paths.append(temp_path)
+    
+    # Save PDF if provided
+    if pdf_file and pdf_file.filename:
+        filename = pdf_file.filename
+        temp_path = str(settings.get_file_path(filename))
+        
+        with open(temp_path, "wb") as f:
+            content = await pdf_file.read()
+            f.write(content)
+        
+        pdf_path = temp_path
+    
+    # Extract emojis from prompt
+    from app.services.text_normalizer import extract_emojis, get_emoji_descriptions
+    emojis = extract_emojis(user_prompt)
+    emoji_descs = get_emoji_descriptions(emojis)
+    
+    emoji_summary = EmojiSummary(
+        count=len(emojis),
+        types=emojis,
+        descriptions=emoji_descs
+    )
+    
+    # Process images
+    image_output = prepare_image_processing_output(
+        request_id=request_id,
+        timestamp=timestamp,
+        image_paths=image_paths,
+        pdf_path=pdf_path,
+        emoji_summary=emoji_summary,
+        run_ocr=run_ocr,
+        ocr_confidence=ocr_confidence
+    )
+    
+    logger.info(
+        f"[{request_id[:8]}] Image processing output: "
+        f"total={image_output.total_images}, "
+        f"suspicious={image_output.suspicious_images_count}, "
+        f"stego={image_output.steganography_detected}"
+    )
+    
+    return image_output
 
 
 if __name__ == "__main__":
