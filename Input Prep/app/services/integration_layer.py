@@ -1,7 +1,7 @@
 """
 Integration layer for all advanced processing services.
 
-Combines unicode detection, heuristics, and advanced image processing
+Combines unicode detection, heuristics, text embeddings, and advanced image processing
 into a unified pipeline.
 """
 
@@ -18,6 +18,7 @@ from app.models.schemas import (
 # Import processing modules
 from app.services.unicode_detector import analyze_unicode_obfuscation
 from app.services.heuristics import run_fast_heuristics
+from app.services.text_embeddings import generate_text_embedding
 from app.services.advanced_image_processor import analyze_image_advanced, check_libraries_available
 from app.services.file_extractor import extract_images_from_pdf
 
@@ -95,6 +96,11 @@ def prepare_layer0_output(
         detected_patterns=heuristic_result.detected_patterns
     )
     
+    # Generate text embedding for semantic fingerprinting
+    embedding_hash = generate_text_embedding(normalized_text)
+    if embedding_hash:
+        logger.info(f"[{request_id[:8]}] Generated text embedding: {embedding_hash}")
+    
     # Calculate combined suspicious score
     suspicious_score = (heuristic_result.suspicious_score * 0.7 + 
                        (0.3 if unicode_result.unicode_obfuscation_flag else 0.0))
@@ -104,6 +110,7 @@ def prepare_layer0_output(
         f"[{request_id[:8]}] Layer 0 analysis: "
         f"unicode_obfuscation={unicode_result.unicode_obfuscation_flag}, "
         f"suspicious_score={suspicious_score:.2f}, "
+        f"embedding={'yes' if embedding_hash else 'no'}, "
         f"time={analysis_time:.1f}ms"
     )
     
@@ -113,6 +120,7 @@ def prepare_layer0_output(
         normalized_text=normalized_text,
         special_char_mask=unicode_result.special_char_mask,
         token_count=token_count,
+        text_embedding_hash=embedding_hash,
         unicode_analysis=unicode_analysis,
         heuristic_flags=heuristic_flags,
         hmac_verified=hmac_verified,

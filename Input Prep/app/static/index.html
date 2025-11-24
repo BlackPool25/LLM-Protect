@@ -773,6 +773,7 @@
             const stats = data.text_embed_stub?.stats || {};
             const unicode = data.layer0?.unicode_analysis || {};
             const heuristics = data.layer0?.heuristic_flags || {};
+            const ragChunks = data.text_embed_stub?.normalized_external?.length || 0;
             
             grid.innerHTML = `
                 <div class="analysis-card">
@@ -787,7 +788,7 @@
                 </div>
                 <div class="analysis-card">
                     <h4>External Data</h4>
-                    <div class="analysis-value">${stats.file_chunks_count || 0}</div>
+                    <div class="analysis-value">${ragChunks}</div>
                     <div class="analysis-label">RAG chunks</div>
                 </div>
                 <div class="analysis-card">

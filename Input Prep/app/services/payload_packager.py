@@ -26,6 +26,7 @@ logger = get_logger(__name__)
 
 def package_payload(
     # Text data
+    original_user_prompt: str,
     normalized_user: str,
     normalized_external: List[str],
     emoji_descriptions: List[str],
@@ -56,7 +57,8 @@ def package_payload(
     This is the main output format of the input preparation module.
     
     Args:
-        normalized_user: Normalized user input text
+        original_user_prompt: Original user input text (for LLM)
+        normalized_user: Normalized user input text (for security analysis)
         normalized_external: List of normalized external chunks with delimiters
         emoji_descriptions: Text descriptions of emojis
         hmacs: HMAC signatures for external chunks
@@ -83,6 +85,7 @@ def package_payload(
         ... )
         >>> emoji_sum = EmojiSummary(count=0, types=[], descriptions=[])
         >>> prepared = package_payload(
+        ...     original_user_prompt="Hello",
         ...     normalized_user="Hello",
         ...     normalized_external=[],
         ...     emoji_descriptions=[],
@@ -103,6 +106,7 @@ def package_payload(
     
     # Create TextEmbedStub
     text_embed_stub = TextEmbedStub(
+        original_user_prompt=original_user_prompt,
         normalized_user=normalized_user,
         normalized_external=normalized_external,
         emoji_descriptions=emoji_descriptions,
@@ -192,6 +196,7 @@ def create_error_response(
     
     # Create text stub with error
     text_embed_stub = TextEmbedStub(
+        original_user_prompt=f"ERROR: {error_message}",
         normalized_user=f"ERROR: {error_message}",
         normalized_external=[],
         emoji_descriptions=[],

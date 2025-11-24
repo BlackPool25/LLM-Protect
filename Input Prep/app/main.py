@@ -432,7 +432,7 @@ async def prepare_text_input(
             logger.info(f"[{request_id}] File chunks: {stats.file_chunks_count}")
             logger.info(f"[{request_id}] Extracted file chars: {stats.extracted_total_chars}")
             
-            # Step 6.5: Layer 0 Analysis (Unicode + Heuristics)
+            # Step 6.5: Layer 0 Analysis (Unicode + Heuristics + Embeddings)
             step_start = time.time()
             attachment_texts = []
             if image_dict and "description" in image_dict and image_dict["description"]:
@@ -457,16 +457,47 @@ async def prepare_text_input(
             logger.info(f"[{request_id}] ===== LAYER 0 ANALYSIS =====")
             logger.info(f"[{request_id}] Unicode obfuscation: {layer0_output.unicode_analysis.unicode_obfuscation_flag}")
             logger.info(f"[{request_id}] Zero-width chars: {layer0_output.unicode_analysis.zero_width_count}")
+            logger.info(f"[{request_id}] Text embedding: {layer0_output.text_embedding_hash or 'N/A'}")
             logger.info(f"[{request_id}] Suspicion score: {layer0_output.suspicious_score:.2%}")
             if layer0_output.heuristic_flags.detected_patterns:
                 logger.info(f"[{request_id}] Detected patterns: {', '.join(layer0_output.heuristic_flags.detected_patterns)}")
+            
+            # Step 6.6: Advanced Image Processing (if image uploaded)
+            image_processing_output = None
+            if image_to_process:
+                step_start = time.time()
+                
+                logger.info(f"[{request_id}] ===== ADVANCED IMAGE PROCESSING =====")
+                logger.info(f"[{request_id}] Processing image: {image_to_process}")
+                
+                image_processing_output = prepare_image_processing_output(
+                    request_id=request_id,
+                    timestamp=datetime.utcnow().isoformat() + 'Z',
+                    image_paths=[image_to_process],
+                    pdf_path=None,  # PDF images handled separately in file extraction
+                    emoji_summary=emoji_summary,
+                    run_ocr=True,
+                    ocr_confidence=50.0
+                )
+                
+                step_times["image_processing"] = (time.time() - step_start) * 1000
+                
+                logger.info(f"[{request_id}] Images analyzed: {image_processing_output.total_images}")
+                logger.info(f"[{request_id}] Suspicious images: {image_processing_output.suspicious_images_count}")
+                logger.info(f"[{request_id}] EXIF found: {image_processing_output.exif_metadata_found}")
+                logger.info(f"[{request_id}] OCR text found: {image_processing_output.ocr_text_found}")
+                logger.info(f"[{request_id}] Steganography: {image_processing_output.steganography_detected}")
+            else:
+                logger.info(f"[{request_id}] ===== ADVANCED IMAGE PROCESSING =====")
+                logger.info(f"[{request_id}] No image provided, skipping advanced analysis")
             
             # Step 7: Package payload
             step_start = time.time()
             total_time = (time.time() - start_time) * 1000
             
             prepared = package_payload(
-                normalized_user=normalized_user,
+                original_user_prompt=parsed["raw_user"],  # Original for LLM
+                normalized_user=normalized_user,  # Normalized for security analysis
                 normalized_external=normalized_external,
                 emoji_descriptions=user_emoji_descs,
                 hmacs=hmacs,
@@ -481,7 +512,8 @@ async def prepare_text_input(
                 file_info=file_info,
                 prep_time_ms=total_time,
                 step_times=step_times,
-                layer0_output=layer0_output
+                layer0_output=layer0_output,
+                image_processing_output=image_processing_output
             )
             step_times["packaging"] = (time.time() - step_start) * 1000
             
@@ -513,7 +545,13 @@ async def prepare_text_input(
             output_saver = get_output_saver()
             saved_path = output_saver.save_layer0_output(prepared)
             if saved_path:
-                logger.info(f"[{request_id}] ✓ Output saved to: {saved_path}")
+                logger.info(f"[{request_id}] ✓ Layer0 output saved to: {saved_path}")
+            
+            # Save media processing output if present
+            if image_processing_output:
+                saved_media_path = output_saver.save_media_output(prepared)
+                if saved_media_path:
+                    logger.info(f"[{request_id}] ✓ Image analysis saved to: {saved_media_path}")
             
             # Save user message to session
             session_manager.add_message(session_id, "user", user_prompt)
@@ -745,8 +783,8 @@ async def generate_llm_response(request: GenerateRequest):
         prepared = request.prepared_input
         
         # Construct the prompt from prepared data
-        # Combine user input with external data context
-        prompt_parts = [prepared.text_embed_stub.normalized_user]
+        # Use ORIGINAL user prompt (not normalized) for LLM
+        prompt_parts = [prepared.text_embed_stub.original_user_prompt]
         
         if prepared.text_embed_stub.normalized_external:
             prompt_parts.append("\n\nContext:")
@@ -764,7 +802,7 @@ async def generate_llm_response(request: GenerateRequest):
             f"[{prepared.metadata.request_id}] Prompt construction:"
         )
         logger.info(
-            f"[{prepared.metadata.request_id}]   User text: {len(prepared.text_embed_stub.normalized_user)} chars"
+            f"[{prepared.metadata.request_id}]   User text (original): {len(prepared.text_embed_stub.original_user_prompt)} chars"
         )
         logger.info(
             f"[{prepared.metadata.request_id}]   External chunks: {len(prepared.text_embed_stub.normalized_external)}"

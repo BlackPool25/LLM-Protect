@@ -1,0 +1,25 @@
+{
+  "request_id": "968bb57f-242a-4837-a7e8-b87c7b0fa053",
+  "timestamp": "20251124_031536",
+  "image_metadata": {
+    "hash": "25778017247608a6f279203b8b297403953a5128843aacc51b67c3a6cb0dad39",
+    "format": "jpeg",
+    "size_bytes": 146236,
+    "dimensions": [
+      512,
+      512
+    ],
+    "description": null
+  },
+  "emoji_data": [
+    {
+      "char": "🥥",
+      "desc": ":coconut:"
+    },
+    {
+      "char": "🎒",
+      "desc": ":backpack:"
+    }
+  ],
+  "note": "This media is stored temporarily for further layer processing"
+}
