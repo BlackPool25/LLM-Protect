@@ -1,0 +1,8 @@
+{
+  "prepared_input": {
+    "text_embed_stub": {
+      "normalized_user": "read the code and explain this shit\n\n#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int arr[5] = {1, 2, 3, 4, 5};\n    for(int i = 0; i < 5; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    return 0;\n}",
+      "normalized_external": []
+    }
+  }
+}

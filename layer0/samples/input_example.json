@@ -1,0 +1,49 @@
+{
+  "processing_type": "layer0_text",
+  "saved_at": "2025-11-28T12:00:00.000000Z",
+  "prepared_input": {
+    "text_embed_stub": {
+      "original_user_prompt": "What is wrong in this program?",
+      "normalized_user": "What is wrong in this program?",
+      "normalized_external": [
+        "[EXTERNAL]#include <stdio.h>\nint main() {\n    printf(\"Hello, World!\");\n    return 0;\n}[/EXTERNAL]",
+        "[EXTERNAL]A stack is a linear data structure that follows LIFO principle.[/EXTERNAL]"
+      ],
+      "emoji_descriptions": [],
+      "hmacs": [],
+      "stats": {
+        "char_total": 200,
+        "token_estimate": 50,
+        "user_external_ratio": 0.15
+      }
+    },
+    "image_emoji_stub": {
+      "image": {},
+      "emoji_summary": {
+        "count": 0,
+        "types": [],
+        "descriptions": []
+      }
+    },
+    "metadata": {
+      "request_id": "test-request-001",
+      "timestamp": "2025-11-28T12:00:00.000000Z",
+      "session_id": "test-session-001",
+      "rag_enabled": true,
+      "has_media": false,
+      "has_file": true
+    },
+    "layer0": {
+      "request_id": "test-request-001",
+      "timestamp": "2025-11-28T12:00:00.000000Z",
+      "normalized_text": "What is wrong in this program? [EXTERNAL]#include <stdio.h>\nint main() { printf(\"Hello, World!\"); return 0; }[/EXTERNAL]",
+      "heuristic_flags": {
+        "has_long_base64": false,
+        "has_system_delimiter": false,
+        "has_repeated_chars": false,
+        "suspicious_score": 0.1,
+        "detected_patterns": []
+      }
+    }
+  }
+}
