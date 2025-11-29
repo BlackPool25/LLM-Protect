@@ -1,0 +1,20 @@
+# Layer0 Security Rules - JSONL Format
+# Each line is a JSON object with: id, pattern, type (block|flag), ignore_case, severity, description
+# Lines starting with # are comments
+
+{"id": "block_ignore_instructions", "pattern": "ignore\\s+(all\\s+)?(previous|prior|above)\\s+(instructions|prompts?|rules?)", "type": "block", "ignore_case": true, "severity": 2, "description": "Attempts to override system instructions"}
+{"id": "block_disregard_prompts", "pattern": "disregard\\s+(all\\s+)?(previous|prior|system)\\s+(prompts?|instructions|rules?)", "type": "block", "ignore_case": true, "severity": 2, "description": "Prompt injection: disregard commands"}
+{"id": "block_no_longer_ai", "pattern": "you\\s+are\\s+(no\\s+longer|not)\\s+an?\\s+(ai|assistant|chatbot|language\\s+model)", "type": "block", "ignore_case": true, "severity": 2, "description": "Jailbreak: identity override"}
+{"id": "block_jailbreak_keywords", "pattern": "\\b(jailbreak|jailbroken|developer\\s+mode|dan\\s+mode|chaos\\s+mode)\\b", "type": "block", "ignore_case": true, "severity": 2, "description": "Known jailbreak terminology"}
+{"id": "block_bypass_safety", "pattern": "(bypass|disable|remove|ignore)\\s+(safety|security|content)\\s+(filters?|measures?|restrictions?)", "type": "block", "ignore_case": true, "severity": 2, "description": "Attempts to bypass safety measures"}
+{"id": "block_act_as_system", "pattern": "act\\s+as\\s+(if\\s+you\\s+are\\s+)?a\\s+(different|new|custom)\\s+system", "type": "block", "ignore_case": true, "severity": 2, "description": "System impersonation attempts"}
+{"id": "flag_triple_hash", "pattern": "#{3,}", "type": "flag", "ignore_case": false, "severity": 1, "description": "Multiple hash symbols (potential delimiter injection)"}
+{"id": "flag_end_tag", "pattern": "<\\s*/?\\s*(END|STOP|SYSTEM|INST)\\s*>", "type": "flag", "ignore_case": true, "severity": 1, "description": "Suspicious XML-like tags"}
+{"id": "flag_zero_width", "pattern": "[\\u200B\\u200C\\u200D\\u2060\\uFEFF]", "type": "flag", "ignore_case": false, "severity": 1, "description": "Zero-width characters (potential obfuscation)"}
+{"id": "flag_unicode_controls", "pattern": "[\\u00AD\\u061C\\u180E\\u200E\\u200F\\u202A-\\u202E\\u2066-\\u2069]", "type": "flag", "ignore_case": false, "severity": 1, "description": "Unicode directional/format controls"}
+{"id": "flag_base64_long", "pattern": "[A-Za-z0-9+/]{100,}={0,2}", "type": "flag", "ignore_case": false, "severity": 1, "description": "Long base64-like strings"}
+{"id": "flag_repeated_delimiters", "pattern": "(={4,}|-{4,}|_{4,}|\\*{4,})", "type": "flag", "ignore_case": false, "severity": 1, "description": "Repeated delimiter characters"}
+{"id": "flag_html_comment", "pattern": "<!--[\\s\\S]*?-->", "type": "flag", "ignore_case": false, "severity": 1, "description": "HTML comments (potential hidden content)"}
+{"id": "flag_script_injection", "pattern": "<\\s*script[^>]*>", "type": "flag", "ignore_case": true, "severity": 2, "description": "Script tag injection attempt"}
+{"id": "flag_prompt_leak", "pattern": "(show|reveal|print|display)\\s+(me\\s+)?(your|the|system)\\s+(prompt|instructions)", "type": "flag", "ignore_case": true, "severity": 1, "description": "Prompt extraction attempts"}
+{"id": "flag_role_play_system", "pattern": "(pretend|imagine|roleplay|act)\\s+(you\\s+are|as\\s+if)\\s+.{0,30}(admin|root|system)", "type": "flag", "ignore_case": true, "severity": 2, "description": "Role-play to system access"}

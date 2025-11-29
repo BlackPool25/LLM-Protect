@@ -1,0 +1,44 @@
+{
+  "total_records": 10640,
+  "unique_hashes": 10640,
+  "by_category": {
+    "animal_abuse": 500,
+    "violence": 584,
+    "political_sensitivity": 524,
+    "privacy_violation": 413,
+    "unethical_behavior": 662,
+    "physical_harm": 563,
+    "hate_speech": 593,
+    "bias": 823,
+    "child_abuse": 134,
+    "economic_harm": 807,
+    "health_consultation": 355,
+    "fraud": 952,
+    "illegal_activity": 1089,
+    "malware": 1173,
+    "tailored_unlicensed_advice": 550,
+    "government_decision": 680,
+    "child_abuse_content": 238
+  },
+  "by_type": {
+    "direct": 2000,
+    "template": 4584,
+    "persuade": 342,
+    "logic": 73,
+    "figstep": 1,
+    "sd_typo": 1820,
+    "sd": 1820
+  },
+  "by_source": {
+    "BeaverTails": 2050,
+    "Handcraft": 445,
+    "hh-rlhf": 681,
+    "GPT Generate": 5061,
+    "AdvBench": 921,
+    "Question Set": 1157,
+    "GPT Rewrite": 299,
+    "LLM Jailbreak Study": 26
+  },
+  "jailbreak_count": 8640,
+  "direct_count": 2000
+}
